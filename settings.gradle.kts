@@ -24,6 +24,7 @@ dependencyResolutionManagement {
                 includeGroupAndSubgroups("com.google")
             }
         }
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
         mavenCentral()
     }
 }
@@ -31,3 +32,5 @@ dependencyResolutionManagement {
 include(":composeApp")
 include(":core")
 include(":core:ui")
+include(":composeApp:data")
+include(":composeApp:domain")
