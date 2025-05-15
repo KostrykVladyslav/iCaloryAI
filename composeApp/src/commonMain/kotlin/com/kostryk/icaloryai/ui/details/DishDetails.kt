@@ -1,10 +1,11 @@
 package com.kostryk.icaloryai.ui.details
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 
 @Composable
 @Preview
-fun DishDetailsScreen(dishId: String) {
+fun DishDetailsScreen(navController: NavController, dishId: String) {
 
 }

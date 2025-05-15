@@ -10,3 +10,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.jetbrainsKotlinJvm) apply false
 }
+
+tasks.withType<JavaExec> {
+    mainClass.set("com.kostryk.icaloryai.MainKt")
+}

@@ -6,8 +6,6 @@ import androidx.compose.ui.window.application
 fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
-        title = "KotlinProject",
-    ) {
-        App()
-    }
+        title = "iCaloryAI"
+    ) { App() }
 }

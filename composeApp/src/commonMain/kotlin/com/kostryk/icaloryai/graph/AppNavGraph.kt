@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.kostryk.icaloryai.ui.details.DishDetailsScreen
 import com.kostryk.icaloryai.ui.main.MainScreen
+import com.kostryk.icaloryai.ui.profile.ProfileScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController, modifier: Modifier) {
@@ -21,7 +22,7 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier) {
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
     ) {
-        composable(NavigationRoute.Main.route) { MainScreen() }
+        composable(NavigationRoute.Main.route) { MainScreen(navController) }
         composable(
             route = NavigationRoute.DishDetails.route,
             arguments = listOf(navArgument(NavigationRoute.DishDetails.ARG_ID) {
@@ -29,8 +30,9 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier) {
             })
         ) { backStackEntry ->
             val dishId = backStackEntry.arguments?.getString(NavigationRoute.DishDetails.ARG_ID)
-            DishDetailsScreen(dishId = dishId.orEmpty())
+            DishDetailsScreen(navController, dishId = dishId.orEmpty())
         }
+        composable(NavigationRoute.Profile.route) { ProfileScreen(navController) }
     }
 }
 
@@ -43,5 +45,5 @@ sealed class NavigationRoute(val route: String) {
         fun createRoute(dishId: String) = "dish_details/$dishId"
     }
 
-    object Settings : NavigationRoute("settings")
+    object Profile : NavigationRoute("profile")
 }

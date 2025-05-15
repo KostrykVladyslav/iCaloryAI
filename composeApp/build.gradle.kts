@@ -11,6 +11,14 @@ plugins {
 }
 
 kotlin {
+//    macosArm64("macos") {
+//        binaries {
+//            executable {
+//                entryPoint = "main"
+//            }
+//        }
+//    }
+
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -29,12 +37,16 @@ kotlin {
         }
     }
 
+    iosArm64()
+    iosX64()
+    iosSimulatorArm64()
     jvm("desktop")
 
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.navigation)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -43,11 +55,11 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.navigation)
-            implementation(libs.kotlinx.serialization.json)
+            implementation("com.russhwolf:multiplatform-settings:1.0.0")
+//            implementation(libs.kotlinx.serialization.json)
         }
 
         val desktopMain by getting
@@ -90,7 +102,6 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    debugImplementation(compose.preview)
 }
 
 compose.desktop {
@@ -103,8 +114,4 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
-}
-
-tasks.withType<JavaExec> {
-    mainClass.set("com.kostryk.icaloryai.MainKt")
 }
