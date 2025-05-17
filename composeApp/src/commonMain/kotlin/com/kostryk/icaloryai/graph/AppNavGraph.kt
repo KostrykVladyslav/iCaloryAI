@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.kostryk.icaloryai.ui.details.DishDetailsScreen
 import com.kostryk.icaloryai.ui.main.MainScreen
 import com.kostryk.icaloryai.ui.profile.ProfileScreen
+import kotlinx.serialization.Serializable
 
 @Composable
 fun AppNavGraph(navController: NavHostController, modifier: Modifier) {
@@ -36,6 +37,7 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier) {
     }
 }
 
+@Serializable
 sealed class NavigationRoute(val route: String) {
 
     object Main : NavigationRoute("main")

@@ -1,11 +1,10 @@
 package com.kostryk.icaloryai.arch.settings
 
+import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.ObservableSettings
+import platform.Foundation.NSUserDefaults
 
-actual class MultiplatformLocalUserWrapper {
-
-    actual fun createLocalUserPref(): ObservableSettings {
-        val userDefaults = NSUserDefaults.standardUserDefaults
-        return AppleSettings(userDefaults)
-    }
+actual fun createLocalUserPref(): ObservableSettings {
+    val userDefaults = NSUserDefaults.standardUserDefaults
+    return NSUserDefaultsSettings(userDefaults)
 }
