@@ -4,4 +4,5 @@
     <string name="camera">Camera</string>
     <string name="galley">Galley</string>
     <string name="add_dish">Add a dish</string>
+    <string name="profile">Profile</string>
 </resources>

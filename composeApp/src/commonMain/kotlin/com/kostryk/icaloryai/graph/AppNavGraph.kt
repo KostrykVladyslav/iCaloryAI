@@ -1,9 +1,12 @@
 package com.kostryk.icaloryai.graph
 
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -14,7 +17,6 @@ import androidx.navigation.navArgument
 import com.kostryk.icaloryai.ui.details.DishDetailsScreen
 import com.kostryk.icaloryai.ui.main.MainScreen
 import com.kostryk.icaloryai.ui.profile.ProfileScreen
-import kotlinx.serialization.Serializable
 
 @Composable
 fun AppNavGraph(navController: NavHostController, modifier: Modifier) {
@@ -23,18 +25,18 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier) {
         modifier = modifier,
         startDestination = NavigationRoute.Main.route,
         enterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                animationSpec = tween(200)
-            )
+            slideInHorizontally(
+                initialOffsetX = { it / 4 },
+                animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(300))
         },
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
         popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.End,
-                animationSpec = tween(200)
-            )
+            slideOutHorizontally(
+                targetOffsetX = { it / 4 },
+                animationSpec = tween(300)
+            ) + fadeOut(animationSpec = tween(300))
         },
     ) {
         composable(NavigationRoute.Main.route) { MainScreen(navController) }
@@ -49,20 +51,4 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier) {
         }
         composable(NavigationRoute.Profile.route) { ProfileScreen(navController) }
     }
-}
-
-@Serializable
-sealed class NavigationRoute(val route: String) {
-
-    @Serializable
-    object Main : NavigationRoute("main")
-
-    @Serializable
-    object DishDetails : NavigationRoute("dish_details/{id}") {
-        const val ARG_ID = "id"
-        fun createRoute(dishId: String) = "dish_details/$dishId"
-    }
-
-    @Serializable
-    object Profile : NavigationRoute("profile")
 }
