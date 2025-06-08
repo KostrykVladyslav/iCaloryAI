@@ -1,6 +1,5 @@
 package com.kostryk.icaloryai
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -10,7 +9,6 @@ import com.kostryk.icaloryai.graph.AppNavGraph
 import com.kostryk.icaloryai.theme.iCaloryAITheme
 
 @Composable
-@Preview
 fun App() {
     iCaloryAITheme {
         val navController = rememberNavController()

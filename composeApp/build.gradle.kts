@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
@@ -12,13 +11,6 @@ plugins {
 }
 
 kotlin {
-//    macosArm64("macos") {
-//        binaries {
-//            executable {
-//                entryPoint = "main"
-//            }
-//        }
-//    }
     val xcf = XCFramework()
 
     androidTarget {
@@ -37,13 +29,14 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
             xcf.add(this)
+            binaryOption("bundleId", "com.kostryk.icaloryai")
+            binaryOption("bundleVersion", "1")
         }
     }
 
     iosArm64()
     iosX64()
     iosSimulatorArm64()
-    jvm("desktop")
 
     sourceSets {
         androidMain.dependencies {
@@ -81,12 +74,6 @@ kotlin {
         val iosSimulatorArm64Main by getting {
             dependsOn(iosMain)
         }
-
-        val desktopMain by getting
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-        }
     }
 }
 
@@ -122,16 +109,4 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-}
-
-compose.desktop {
-    application {
-        mainClass = "com.kostryk.icaloryai.MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.kostryk.icaloryai"
-            packageVersion = "1.0.0"
-        }
-    }
 }
