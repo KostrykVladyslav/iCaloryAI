@@ -8,9 +8,12 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
+    jvmToolchain(17)
+
     val xcf = XCFramework()
 
     androidTarget {
@@ -43,6 +46,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.navigation)
+            implementation(libs.koin.android)
         }
         val commonMain by getting {
             dependencies {
@@ -57,6 +61,16 @@ kotlin {
                 implementation(libs.androidx.navigation)
                 implementation(libs.multiplatform.settings)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.koin.core)
+
+                //database
+                implementation(libs.androidx.room.runtime)
+                implementation(libs.sqlite.bundled)
+                implementation(libs.sqlite)
+
+                //modules
+                implementation(projects.domain)
+                implementation(projects.data)
             }
         }
 
@@ -109,4 +123,8 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
 }
