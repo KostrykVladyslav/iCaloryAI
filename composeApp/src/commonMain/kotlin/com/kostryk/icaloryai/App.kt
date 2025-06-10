@@ -7,17 +7,20 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.kostryk.icaloryai.graph.AppNavGraph
 import com.kostryk.icaloryai.theme.iCaloryAITheme
+import org.koin.compose.KoinContext
 
 @Composable
 fun App() {
     iCaloryAITheme {
-        val navController = rememberNavController()
-        Scaffold(modifier = Modifier.fillMaxSize()) {
-            AppNavGraph(
-                navController = navController,
-                modifier = Modifier
-                    .fillMaxSize(),
-            )
+        KoinContext {
+            val navController = rememberNavController()
+            Scaffold(modifier = Modifier.fillMaxSize()) {
+                AppNavGraph(
+                    navController = navController,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                )
+            }
         }
     }
 }

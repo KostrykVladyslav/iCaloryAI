@@ -46,12 +46,14 @@ import icaloryai.composeapp.generated.resources.ic_plus
 import icaloryai.composeapp.generated.resources.ic_profile
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
 fun MainScreen(navController: NavController) {
+    val viewModel = koinViewModel<MainViewModel>()
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(true)
 
     Scaffold(
         modifier = Modifier
@@ -165,11 +167,17 @@ fun MainScreen(navController: NavController) {
         }
     }
 
+    val sheetState = rememberModalBottomSheetState(true)
+
     SelectImageBottomSheet(
         sheetState = sheetState,
         showBottomSheet = showBottomSheet,
         onDismissRequest = { showBottomSheet = false },
-        onTakePhotoActionSelected = {},
-        onPickGalleryActionSelected = {}
+        onTakePhotoActionSelected = {
+
+        },
+        onPickGalleryActionSelected = {
+
+        }
     )
 }

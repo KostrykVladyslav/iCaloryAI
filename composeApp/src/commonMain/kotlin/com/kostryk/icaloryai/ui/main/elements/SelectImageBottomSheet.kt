@@ -36,8 +36,8 @@ fun SelectImageBottomSheet(
     sheetState: SheetState,
     showBottomSheet: Boolean,
     onDismissRequest: () -> Unit,
-    onTakePhotoActionSelected: (String) -> Unit,
-    onPickGalleryActionSelected: (String) -> Unit,
+    onTakePhotoActionSelected: () -> Unit,
+    onPickGalleryActionSelected: () -> Unit,
 ) {
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -54,6 +54,7 @@ fun SelectImageBottomSheet(
                         interactionSource = null,
                         indication = null
                     ) {
+                        onTakePhotoActionSelected()
                         onDismissRequest()
                     }
                 ) {
@@ -85,6 +86,7 @@ fun SelectImageBottomSheet(
                         interactionSource = null,
                         indication = null
                     ) {
+                        onPickGalleryActionSelected()
                         onDismissRequest()
                     }
                 ) {

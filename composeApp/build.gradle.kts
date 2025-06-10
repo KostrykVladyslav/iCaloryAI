@@ -45,40 +45,38 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+        }
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.navigation)
-            implementation(libs.koin.android)
-            
-            //database - только для Android
+            implementation(libs.multiplatform.settings)
+            implementation(libs.kotlinx.serialization.json)
+
+            // koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+
+            // database
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.sqlite)
-        }
-        val commonMain by getting {
-            dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.material3)
-                implementation(compose.ui)
-                implementation(compose.components.resources)
-                implementation(libs.androidx.lifecycle.viewmodel)
-                implementation(libs.androidx.lifecycle.runtime.compose)
-                implementation(libs.androidx.navigation)
-                implementation(libs.multiplatform.settings)
-                implementation(libs.kotlinx.serialization.json)
-                implementation(libs.koin.core)
 
-                //modules
-                implementation(projects.domain)
-                implementation(projects.data)
-            }
+            //modules
+            implementation(projects.domain)
+            implementation(projects.data)
         }
 
         val iosMain by creating {
-            dependsOn(commonMain)
-            dependencies {
-                // Временно исключаем Room для iOS
-            }
+            dependsOn(commonMain.get())
+            dependencies { }
         }
         val iosX64Main by getting {
             dependsOn(iosMain)
