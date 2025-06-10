@@ -47,6 +47,11 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.navigation)
             implementation(libs.koin.android)
+            
+            //database - только для Android
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.sqlite.bundled)
+            implementation(libs.sqlite)
         }
         val commonMain by getting {
             dependencies {
@@ -63,11 +68,6 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.koin.core)
 
-                //database
-                implementation(libs.androidx.room.runtime)
-                implementation(libs.sqlite.bundled)
-                implementation(libs.sqlite)
-
                 //modules
                 implementation(projects.domain)
                 implementation(projects.data)
@@ -77,6 +77,7 @@ kotlin {
         val iosMain by creating {
             dependsOn(commonMain)
             dependencies {
+                // Временно исключаем Room для iOS
             }
         }
         val iosX64Main by getting {
@@ -124,7 +125,7 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
     add("kspAndroid", libs.androidx.room.compiler)
-    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-    add("kspIosX64", libs.androidx.room.compiler)
-    add("kspIosArm64", libs.androidx.room.compiler)
+    // add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    // add("kspIosX64", libs.androidx.room.compiler)
+    // add("kspIosArm64", libs.androidx.room.compiler)
 }

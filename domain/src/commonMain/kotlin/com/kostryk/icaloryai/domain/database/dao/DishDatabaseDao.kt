@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface DishDatabaseDao {
 
     @Insert
-    fun insertDish(dish: DishDatabaseEntity)
+    suspend fun insertDish(dish: DishDatabaseEntity)
 
     @Query("SELECT count(*) FROM dishes")
     suspend fun count(): Int

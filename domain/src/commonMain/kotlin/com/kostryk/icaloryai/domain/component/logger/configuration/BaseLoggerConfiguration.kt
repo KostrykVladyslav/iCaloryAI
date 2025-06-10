@@ -6,7 +6,7 @@ abstract class BaseLoggerConfiguration : LoggerConfiguration {
         if (any is String) {
             return any
         }
-        var className = any.javaClass.name
+        var className = any::class.simpleName.orEmpty()
         var firstPosition = className.lastIndexOf(".") + 1
         if (firstPosition < 0) {
             firstPosition = 0
