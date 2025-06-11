@@ -74,6 +74,8 @@ kotlin {
             implementation(libs.sqlite.bundled)
             implementation(libs.sqlite)
 
+            implementation(libs.compose.shimmer)
+
             //modules
             implementation(projects.domain)
             implementation(projects.data)

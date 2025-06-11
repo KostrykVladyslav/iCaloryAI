@@ -1,6 +1,10 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -16,23 +20,11 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.sqlite)
+            implementation(libs.generativeai)
             implementation(project(":domain"))
         }
 
-        val iosMain by creating {
-            dependsOn(commonMain.get())
-            dependencies {
-            }
-        }
-        val iosX64Main by getting {
-            dependsOn(iosMain)
-        }
-        val iosArm64Main by getting {
-            dependsOn(iosMain)
-        }
-        val iosSimulatorArm64Main by getting {
-            dependsOn(iosMain)
-        }
+        iosMain.dependencies {}
     }
 }
 
@@ -42,5 +34,26 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+}
+
+buildkonfig {
+    packageName = "com.kostryk.icaloryai.data"
+
+    val localPropsFile = rootProject.file("local.properties")
+    val localProperties = Properties()
+    if (localPropsFile.exists()) {
+        runCatching {
+            localProperties.load(localPropsFile.inputStream())
+        }.getOrElse {
+            it.printStackTrace()
+        }
+    }
+    defaultConfigs {
+        buildConfigField(
+            FieldSpec.Type.STRING,
+            "GEMINI_API_KEY",
+            localProperties["gemini_api_key"]?.toString() ?: ""
+        )
     }
 }

@@ -143,34 +143,7 @@ fun MainScreen(navController: NavController) {
                 carbs = 0 to 175
             )
             Spacer(Modifier.height(32.dp))
-            Text(
-                text = "Recently",
-                style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        if (isSystemInDarkTheme()) Color.DarkGray else Color.White,
-                        RoundedCornerShape(16.dp)
-                    )
-                    .padding(24.dp)
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "No meals yet!",
-                        style = androidx.compose.material3.MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = "Grab something tasty and log it here",
-                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+            DrawItems(viewModel)
         }
     }
 
@@ -237,16 +210,52 @@ fun MainScreen(navController: NavController) {
             positiveButtonText = "Settings",
             negativeButtonText = "Cancel",
             onPositiveClick = {
-                showAlertDialog = false
                 launchSetting = true
+                showAlertDialog = false
+                launchCamera = false
+                launchGallery = false
             },
             onNegativeClick = {
                 showAlertDialog = false
+                launchCamera = false
+                launchGallery = false
             })
     }
 
     if (launchSetting) {
         permissionsManager.launchSettings()
         launchSetting = false
+    }
+}
+
+@Composable
+private fun DrawItems(viewModel: MainViewModel) {
+    Text(
+        text = "Recently",
+        style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                if (isSystemInDarkTheme()) Color.DarkGray else Color.White,
+                RoundedCornerShape(16.dp)
+            )
+            .padding(24.dp)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "No meals yet!",
+                style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "Grab something tasty and log it here",
+                style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
