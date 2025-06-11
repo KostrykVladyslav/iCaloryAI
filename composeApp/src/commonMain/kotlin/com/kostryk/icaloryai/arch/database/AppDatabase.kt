@@ -7,5 +7,5 @@ import com.kostryk.icaloryai.domain.database.entity.DishDatabaseEntity
 
 @Database(entities = [DishDatabaseEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun getDao(): DishDatabaseDao
+    abstract fun getDishDao(): DishDatabaseDao
 }

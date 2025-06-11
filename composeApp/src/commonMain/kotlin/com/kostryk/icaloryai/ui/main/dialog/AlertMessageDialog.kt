@@ -1,5 +1,6 @@
 package com.kostryk.icaloryai.ui.main.dialog
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,9 +35,8 @@ fun AlertMessageDialog(
     positiveButtonText: String? = null,
     negativeButtonText: String? = null,
     onPositiveClick: () -> Unit = {},
-    onNegativeClick: () -> Unit = {},
+    onNegativeClick: () -> Unit = {}
 ) {
-
     Dialog(
         onDismissRequest = {}, properties = DialogProperties(
             dismissOnBackPress = false,
@@ -54,19 +54,21 @@ fun AlertMessageDialog(
             ) {
                 Text(
                     text = title,
-                    fontSize = MaterialTheme.typography.subtitle2.fontSize,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colors.onBackground,
-                    textAlign = TextAlign.Center
+                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                    textAlign = TextAlign.Center,
+                    style = androidx.compose.material3.MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 message?.let {
                     Text(
                         text = it,
                         fontSize = MaterialTheme.typography.h6.fontSize,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
-                        textAlign = TextAlign.Center
+                        color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                        textAlign = TextAlign.Center,
+                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
                     )
                 }
                 Spacer(modifier = Modifier.height(15.dp))
@@ -80,8 +82,8 @@ fun AlertMessageDialog(
                             modifier = Modifier.weight(1f), onClick = {
                                 onNegativeClick()
                             }, colors = ButtonDefaults.buttonColors(
-                                contentColor = Color.White,
-                                backgroundColor = MaterialTheme.colors.primary
+                                contentColor = if (isSystemInDarkTheme()) Color.Black else Color.White,
+                                backgroundColor = if (isSystemInDarkTheme()) Color.White else Color.Black
                             )
                         ) {
                             Text(text = it, textAlign = TextAlign.Center, maxLines = 1)
@@ -94,8 +96,8 @@ fun AlertMessageDialog(
                             modifier = Modifier.weight(1f), onClick = {
                                 onPositiveClick()
                             }, colors = ButtonDefaults.buttonColors(
-                                contentColor = Color.White,
-                                backgroundColor = MaterialTheme.colors.primary
+                                contentColor = if (isSystemInDarkTheme()) Color.Black else Color.White,
+                                backgroundColor = if (isSystemInDarkTheme()) Color.White else Color.Black
                             )
                         ) {
                             Text(text = it, textAlign = TextAlign.Center, maxLines = 1)

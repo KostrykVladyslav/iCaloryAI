@@ -9,9 +9,9 @@ class DishDatabaseEntity(
     val id: Long = 0L,
     val createdAt: String? = null,
     val name: String? = null,
-    val imageBase64: String? = null,
+    val image: ByteArray? = null,
     val calories: Int? = null,
     val protein: Int? = null,
-    val fat: Int? = null,
-    val carbohydrates: Int? = null
+    val fats: Int? = null,
+    val carbs: Int? = null
 )

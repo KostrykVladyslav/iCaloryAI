@@ -15,16 +15,16 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
+
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.sqlite)
+            
             implementation(libs.generativeai)
             implementation(project(":domain"))
         }
-
-        iosMain.dependencies {}
     }
 }
 
