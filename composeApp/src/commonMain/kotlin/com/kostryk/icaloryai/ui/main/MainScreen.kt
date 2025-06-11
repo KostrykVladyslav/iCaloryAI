@@ -36,7 +36,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.kostryk.icaloryai.arch.manager.camera.rememberCameraManager
+import com.kostryk.icaloryai.arch.manager.gallery.rememberGalleryManager
+import com.kostryk.icaloryai.arch.manager.permissions.PermissionCallback
+import com.kostryk.icaloryai.arch.manager.permissions.PermissionStatus
+import com.kostryk.icaloryai.arch.manager.permissions.PermissionType
+import com.kostryk.icaloryai.arch.manager.permissions.createPermissionsManager
 import com.kostryk.icaloryai.graph.NavigationRoute
+import com.kostryk.icaloryai.ui.main.dialog.AlertMessageDialog
 import com.kostryk.icaloryai.ui.main.elements.CalendarWeekSection
 import com.kostryk.icaloryai.ui.main.elements.CaloriesAndMacrosSection
 import com.kostryk.icaloryai.ui.main.elements.SelectImageBottomSheet
@@ -167,17 +174,79 @@ fun MainScreen(navController: NavController) {
         }
     }
 
-    val sheetState = rememberModalBottomSheetState(true)
+    val cameraManager = rememberCameraManager { viewModel.handleCameraResult(it) }
+    val galleryManager = rememberGalleryManager { viewModel.handleGalleryResult(it) }
+
+    var showAlertDialog by remember { mutableStateOf(false) }
+    var launchSetting by remember { mutableStateOf(value = false) }
+    var launchCamera by remember { mutableStateOf(value = false) }
+    var launchGallery by remember { mutableStateOf(value = false) }
+
+    val permissionsManager = createPermissionsManager(object : PermissionCallback {
+        override fun onPermissionStatus(
+            permissionType: PermissionType,
+            status: PermissionStatus
+        ) {
+            when (status) {
+                PermissionStatus.GRANTED -> {
+                    when (permissionType) {
+                        PermissionType.CAMERA -> cameraManager.launch()
+                        PermissionType.GALLERY -> galleryManager.launch()
+                    }
+                }
+
+                else -> showAlertDialog = true
+            }
+        }
+    })
 
     SelectImageBottomSheet(
-        sheetState = sheetState,
+        sheetState = rememberModalBottomSheetState(true),
         showBottomSheet = showBottomSheet,
         onDismissRequest = { showBottomSheet = false },
         onTakePhotoActionSelected = {
-
+            launchCamera = true
         },
         onPickGalleryActionSelected = {
-
+            launchGallery = true
         }
     )
+
+    if (launchCamera) {
+        if (permissionsManager.isPermissionGranted(PermissionType.CAMERA)) {
+            cameraManager.launch()
+            launchCamera = false
+        } else {
+            permissionsManager.askPermission(PermissionType.CAMERA)
+        }
+    }
+
+    if (launchGallery) {
+        if (permissionsManager.isPermissionGranted(PermissionType.GALLERY)) {
+            galleryManager.launch()
+            launchGallery = false
+        } else {
+            permissionsManager.askPermission(PermissionType.GALLERY)
+        }
+    }
+
+    if (showAlertDialog) {
+        AlertMessageDialog(
+            title = "Permission Required",
+            message = "To set your profile picture, please grant this permission. You can manage permissions in your device settings.",
+            positiveButtonText = "Settings",
+            negativeButtonText = "Cancel",
+            onPositiveClick = {
+                showAlertDialog = false
+                launchSetting = true
+            },
+            onNegativeClick = {
+                showAlertDialog = false
+            })
+    }
+
+    if (launchSetting) {
+        permissionsManager.launchSettings()
+        launchSetting = false
+    }
 }

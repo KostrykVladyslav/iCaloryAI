@@ -42,9 +42,14 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
+        val androidMain by getting {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(compose.preview)
+                implementation(libs.androidx.activity.compose)
+                implementation(libs.accompanist.permissions)
+                implementation(libs.koin.android)
+            }
         }
         commonMain.dependencies {
             implementation(compose.runtime)
