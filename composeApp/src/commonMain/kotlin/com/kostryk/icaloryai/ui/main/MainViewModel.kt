@@ -3,6 +3,7 @@ package com.kostryk.icaloryai.ui.main
 import androidx.compose.ui.graphics.ImageBitmap
 import com.kostryk.icaloryai.arch.manager.file.SharedImage
 import com.kostryk.icaloryai.arch.utils.byteArrayToImageBitmap
+import com.kostryk.icaloryai.arch.utils.byteArrayToImageBitmapWithResize
 import com.kostryk.icaloryai.domain.entities.dish.DishEntity
 import com.kostryk.icaloryai.domain.entities.result.CreateDishStatusEntity
 import com.kostryk.icaloryai.domain.usecase.dish.CreateDishUseCase
@@ -18,7 +19,8 @@ class MainViewModel(
     private val createDishUseCase: CreateDishUseCase
 ) : BaseViewModel() {
 
-    private val _dishesWithImages = MutableStateFlow<List<Pair<ImageBitmap?, DishEntity>>>(emptyList())
+    private val _dishesWithImages =
+        MutableStateFlow<List<Pair<ImageBitmap?, DishEntity>>>(emptyList())
     val dishesWithImages: Flow<List<Pair<ImageBitmap?, DishEntity>>> = _dishesWithImages
 
     private val _createDishResult = MutableStateFlow<CreateDishStatusEntity?>(null)
@@ -39,7 +41,8 @@ class MainViewModel(
     private suspend fun getAllDishes() {
         getAllDishesUseCase.execute().collect { dishesList ->
             _dishesWithImages.emit(dishesList.map { dish ->
-                val parsedImageBitmap = dish.imageByteArray?.let { byteArrayToImageBitmap(it) }
+                val parsedImageBitmap =
+                    dish.imageByteArray?.let { byteArrayToImageBitmapWithResize(it) }
                 Pair(parsedImageBitmap, dish)
             })
         }

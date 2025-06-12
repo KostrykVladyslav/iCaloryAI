@@ -6,6 +6,8 @@ import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.get
+import kotlinx.cinterop.refTo
+import kotlinx.cinterop.useContents
 import kotlinx.cinterop.usePinned
 import org.jetbrains.skia.ColorAlphaType
 import org.jetbrains.skia.ColorSpace
@@ -25,6 +27,36 @@ import platform.CoreGraphics.CGImageRelease
 import platform.Foundation.NSData
 import platform.Foundation.create
 import platform.UIKit.UIImage
+import platform.UIKit.*
+import platform.CoreGraphics.CGRectMake
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
+import kotlinx.cinterop.refTo
+import platform.CoreGraphics.CGSizeMake
+import platform.CoreGraphics.CGSizeMake
+
+@OptIn(ExperimentalForeignApi::class)
+actual fun byteArrayToImageBitmapWithResize(bytes: ByteArray): ImageBitmap {
+    val uiImage = UIImage(byteArrayToNSData(bytes))
+
+    val newWidth = uiImage.size.useContents { width } / 5.0
+    val newHeight = uiImage.size.useContents { height } / 5.0
+
+    UIGraphicsBeginImageContextWithOptions(
+        size = CGSizeMake(newWidth, newHeight),
+        false,
+        1.0
+    )
+    uiImage.drawInRect(CGRectMake(0.0, 0.0, newWidth, newHeight))
+    val resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+
+    val jpegData = resizedImage?.JPEGRepresentation(0.8) ?: return ImageBitmap(1, 1)
+    val resizedBytes = ByteArray(jpegData.length.toInt())
+    jpegData.getBytes(resizedBytes.refTo(0), jpegData.length)
+
+    return byteArrayToImageBitmap(resizedBytes)
+}
 
 actual fun byteArrayToImageBitmap(bytes: ByteArray): ImageBitmap {
     val uiImage = UIImage(byteArrayToNSData(bytes)).toSkiaImage()
@@ -41,7 +73,7 @@ fun byteArrayToNSData(bytes: ByteArray): NSData =
     }
 
 @OptIn(ExperimentalForeignApi::class)
-private fun UIImage.toSkiaImage(): Image? {
+private fun UIImage.toSkiaImage(resize: Boolean = false): Image? {
     val imageRef = this.CGImage ?: return null
 
     val width = CGImageGetWidth(imageRef).toInt()
@@ -75,7 +107,6 @@ private fun UIImage.toSkiaImage(): Image? {
     val skiaColorSpace = ColorSpace.sRGB
     val colorType = ColorType.RGBA_8888
 
-    // Convert RGBA to BGRA
     for (i in byteArray.indices step 4) {
         val r = byteArray[i]
         val g = byteArray[i + 1]
@@ -88,8 +119,8 @@ private fun UIImage.toSkiaImage(): Image? {
 
     return Image.makeRaster(
         imageInfo = ImageInfo(
-            width = width,
-            height = height,
+            width = if (resize) width / 5 else width,
+            height = if (resize) height / 5 else height,
             colorType = colorType,
             alphaType = alphaType,
             colorSpace = skiaColorSpace
