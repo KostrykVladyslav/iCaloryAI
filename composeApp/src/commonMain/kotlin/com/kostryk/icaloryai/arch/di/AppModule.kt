@@ -2,11 +2,14 @@ package com.kostryk.icaloryai.arch.di
 
 import com.kostryk.icaloryai.Platform
 import com.kostryk.icaloryai.arch.database.AppDatabase
+import com.kostryk.icaloryai.arch.manager.theme.ThemeManager
 import com.kostryk.icaloryai.domain.database.dao.DishDatabaseDao
+import com.kostryk.icaloryai.domain.manager.settings.SettingsManager
 import com.kostryk.icaloryai.domain.usecase.dish.CreateDishUseCase
 import com.kostryk.icaloryai.domain.usecase.dish.GetAllDishesUseCase
 import com.kostryk.icaloryai.getPlatform
 import com.kostryk.icaloryai.ui.main.MainViewModel
+import com.kostryk.icaloryai.ui.profile.ProfileViewModel
 import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -21,6 +24,12 @@ val appMainModule = module {
         MainViewModel(
             getAllDishesUseCase = get<GetAllDishesUseCase>(),
             createDishUseCase = get<CreateDishUseCase>()
+        )
+    }
+    viewModel<ProfileViewModel> {
+        ProfileViewModel(
+            settingsManager = get<SettingsManager>(),
+            themeManager = get<ThemeManager>()
         )
     }
 }

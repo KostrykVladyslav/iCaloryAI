@@ -1,7 +1,6 @@
 package com.kostryk.icaloryai.ui.main.elements
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.kostryk.icaloryai.theme.isDarkTheme
 
 @Composable
 fun NoDishesSection() {
@@ -23,7 +23,7 @@ fun NoDishesSection() {
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                if (isSystemInDarkTheme()) Color.DarkGray else Color.White,
+                if (isDarkTheme()) Color.DarkGray else Color.White,
                 RoundedCornerShape(16.dp)
             )
             .padding(24.dp)

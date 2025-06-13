@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,7 +45,6 @@ import com.kostryk.icaloryai.arch.manager.permissions.PermissionCallback
 import com.kostryk.icaloryai.arch.manager.permissions.PermissionStatus
 import com.kostryk.icaloryai.arch.manager.permissions.PermissionType
 import com.kostryk.icaloryai.arch.manager.permissions.createPermissionsManager
-import com.kostryk.icaloryai.arch.utils.byteArrayToImageBitmap
 import com.kostryk.icaloryai.domain.entities.result.CreateDishStatusEntity
 import com.kostryk.icaloryai.graph.NavigationRoute
 import com.kostryk.icaloryai.ui.main.dialog.AlertMessageDialog
@@ -88,7 +87,7 @@ fun MainScreen(navController: NavController) {
                     Icon(
                         painter = painterResource(Res.drawable.ic_profile),
                         contentDescription = null,
-                        tint = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
                             .size(height = 44.dp, width = 44.dp)
                             .padding(8.dp)
@@ -104,18 +103,19 @@ fun MainScreen(navController: NavController) {
         },
         floatingActionButton = {
             Box(
-                Modifier.background(
-                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
-                    shape = RoundedCornerShape(20.dp)
-                ).clickable(
-                    interactionSource = null,
-                    indication = null
-                ) { showBottomSheet = !showBottomSheet }
+                Modifier.shadow(4.dp, RoundedCornerShape(20.dp))
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(20.dp)
+                    ).clickable(
+                        interactionSource = null,
+                        indication = null
+                    ) { showBottomSheet = !showBottomSheet }
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.ic_plus),
                     contentDescription = null,
-                    tint = if (isSystemInDarkTheme()) Color.Black else Color.White,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .size(width = 70.dp, height = 40.dp)
                         .padding(8.dp)
@@ -132,6 +132,7 @@ fun MainScreen(navController: NavController) {
                 .scrollable(rememberScrollState(), Orientation.Vertical)
         ) {
             Spacer(Modifier.height(16.dp))
+
             CalendarWeekSection(
                 daysAndDates = listOf(
                     "M" to 2,
@@ -147,9 +148,9 @@ fun MainScreen(navController: NavController) {
             Spacer(Modifier.height(16.dp))
             CaloriesAndMacrosSection(
                 caloriesLeft = 1750,
-                protein = 0 to 131,
-                fat = 0 to 58,
-                carbs = 0 to 175
+                protein = 20 to 131,
+                fat = 20 to 58,
+                carbs = 20 to 175
             )
             Spacer(Modifier.height(32.dp))
             DrawDishItems(viewModel)
@@ -260,13 +261,11 @@ private fun DrawDishItems(viewModel: MainViewModel) {
             dishes.forEachIndexed { index, dish ->
                 item {
                     DishSection(
-                        title = dish.name,
                         image = images[index],
-                        calories = dish.calories,
-                        protein = dish.protein,
-                        fat = dish.fats,
-                        carbs = dish.carbs,
-                        time = dish.displayTime
+                        dish = dish,
+                        onDishSelected = {
+
+                        }
                     )
                     Spacer(Modifier.height(12.dp))
                 }

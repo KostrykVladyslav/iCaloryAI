@@ -1,6 +1,5 @@
 package com.kostryk.icaloryai.ui.main.elements
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
@@ -12,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.kostryk.icaloryai.theme.isDarkTheme
 
 @Composable
 fun CircularProgressBar(percentage: Float, calories: Int) {
@@ -28,7 +28,7 @@ fun CircularProgressBar(percentage: Float, calories: Int) {
                 )
             )
             drawArc(
-                color = Color.Black,
+                color = Color(0xFFFF7600), // Primary color
                 startAngle = 135f,
                 sweepAngle = 270f * percentage,
                 useCenter = false,
@@ -44,14 +44,14 @@ fun CircularProgressBar(percentage: Float, calories: Int) {
                 style = androidx.compose.material3.MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
-                color = if (isSystemInDarkTheme()) Color.White else Color.Black
+                color = if (isDarkTheme()) Color.White else Color.Black
             )
             Text(
                 text = "Calories left",
                 style = androidx.compose.material3.MaterialTheme.typography.bodySmall.copy(
                     fontWeight = FontWeight.Bold
                 ),
-                color = if (isSystemInDarkTheme()) Color.White else Color.Black
+                color = if (isDarkTheme()) Color.White else Color.Black
             )
         }
     }

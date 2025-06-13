@@ -2,7 +2,7 @@ package com.kostryk.icaloryai.ui.main.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +26,8 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.kostryk.icaloryai.domain.entities.dish.DishEntity
+import com.kostryk.icaloryai.theme.isDarkTheme
 import icaloryai.composeapp.generated.resources.Res
 import icaloryai.composeapp.generated.resources.ic_food_balck
 import icaloryai.composeapp.generated.resources.ic_food_white
@@ -33,22 +35,20 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun DishSection(
-    title: String,
     image: ImageBitmap? = null,
-    calories: Int,
-    protein: Int,
-    fat: Int,
-    carbs: Int,
-    time: String,
+    dish: DishEntity,
+    onDishSelected: (DishEntity) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                if (isSystemInDarkTheme()) Color.DarkGray else Color.White,
+                if (isDarkTheme()) Color.DarkGray else Color.White,
                 RoundedCornerShape(16.dp)
             )
+            .clickable { onDishSelected(dish) }
+            .clip(RoundedCornerShape(16.dp))
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -56,12 +56,12 @@ fun DishSection(
                 modifier = Modifier
                     .size(56.dp)
                     .background(
-                        color = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray,
+                        color = if (isDarkTheme()) Color.Gray else Color.LightGray,
                         shape = RoundedCornerShape(12.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                val painter = image?.let { BitmapPainter(it) } ?: if (isSystemInDarkTheme()) {
+                val painter = image?.let { BitmapPainter(it) } ?: if (isDarkTheme()) {
                     painterResource(Res.drawable.ic_food_white)
                 } else painterResource(Res.drawable.ic_food_balck)
                 Image(
@@ -76,30 +76,30 @@ fun DishSection(
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = title,
+                    text = dish.name,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "$calories Calories",
+                        text = "${dish.calories} Calories",
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        text = "P $protein g",
+                        text = "P ${dish.protein} g",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFFE57373)
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
-                        text = "F $fat g",
+                        text = "F ${dish.fats} g",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFFFFB74D)
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
-                        text = "C $carbs g",
+                        text = "C ${dish.carbs} g",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF64B5F6)
                     )
@@ -108,7 +108,7 @@ fun DishSection(
             Spacer(Modifier.width(8.dp))
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = time,
+                    text = dish.displayTime,
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )

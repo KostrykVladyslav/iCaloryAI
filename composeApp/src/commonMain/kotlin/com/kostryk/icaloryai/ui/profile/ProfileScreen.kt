@@ -2,7 +2,6 @@ package com.kostryk.icaloryai.ui.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,24 +20,34 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.kostryk.icaloryai.domain.enums.theme.ThemeType
+import com.kostryk.icaloryai.theme.isDarkTheme
+import com.kostryk.icaloryai.ui.profile.dialog.ThemeSelectorBottomSheet
 import com.kostryk.icaloryai.ui.profile.elements.Divider
 import com.kostryk.icaloryai.ui.profile.elements.ProfileInfoRow
 import com.kostryk.icaloryai.ui.profile.elements.ProfileMenuItem
-import com.kostryk.icaloryai.ui.profile.elements.ProfileSwitchItem
 import icaloryai.composeapp.generated.resources.Res
 import icaloryai.composeapp.generated.resources.ic_arrow_back
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
-
 fun ProfileScreen(navController: NavController) {
+    val viewModel = koinViewModel<ProfileViewModel>()
+    var showThemeSelector by remember { mutableStateOf(false) }
+
     Column(
         Modifier
             .fillMaxSize()
@@ -71,7 +80,7 @@ fun ProfileScreen(navController: NavController) {
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .background(
-                    color = if (isSystemInDarkTheme()) Color.DarkGray else Color.White,
+                    color = if (isDarkTheme()) Color.DarkGray else Color.White,
                     shape = RoundedCornerShape(20.dp)
                 )
                 .clip(RoundedCornerShape(20.dp))
@@ -95,7 +104,7 @@ fun ProfileScreen(navController: NavController) {
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .background(
-                    color = if (isSystemInDarkTheme()) Color.DarkGray else Color.White,
+                    color = if (isDarkTheme()) Color.DarkGray else Color.White,
                     shape = RoundedCornerShape(20.dp)
                 )
                 .clip(RoundedCornerShape(20.dp))
@@ -104,14 +113,15 @@ fun ProfileScreen(navController: NavController) {
                 ProfileMenuItem(title = "Personal details", onClick = { })
                 Divider()
                 ProfileMenuItem(
-                    title = "Adjust goals",
-                    subtitle = "Calories, Protein, Fats, Carbs",
-                    onClick = { })
-                Divider()
-                ProfileSwitchItem(
-                    title = "Burned Calories",
-                    subtitle = "Add burned calories to daily goal"
-                )
+                    title = "Selected theme",
+                    subtitle = when (viewModel.getThemeType()) {
+                        ThemeType.SYSTEM -> "System Default"
+                        ThemeType.DARK -> "Dark"
+                        ThemeType.LIGHT -> "Light"
+                    },
+                    onClick = {
+                        showThemeSelector = true
+                    })
             }
         }
         Spacer(Modifier.height(32.dp))
@@ -125,7 +135,7 @@ fun ProfileScreen(navController: NavController) {
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .background(
-                    if (isSystemInDarkTheme()) Color.DarkGray else Color.White,
+                    if (isDarkTheme()) Color.DarkGray else Color.White,
                     RoundedCornerShape(20.dp)
                 )
                 .clip(RoundedCornerShape(20.dp))
@@ -146,6 +156,14 @@ fun ProfileScreen(navController: NavController) {
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 42.dp, bottom = 12.dp)
+        )
+    }
+
+    if (showThemeSelector) {
+        ThemeSelectorBottomSheet(
+            currentThemeType = viewModel.getThemeType(),
+            onDismiss = { showThemeSelector = false },
+            onThemeSelected = { viewModel.setThemeType(it) }
         )
     }
 }

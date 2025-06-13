@@ -1,7 +1,6 @@
 package com.kostryk.icaloryai.ui.main.elements
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.kostryk.icaloryai.theme.isDarkTheme
 
 @Composable
 fun CalendarWeekSection(
@@ -33,9 +34,9 @@ fun CalendarWeekSection(
             days.forEach { day ->
                 Text(
                     text = day,
-                    style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f),
-                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center
                 )
             }
@@ -55,15 +56,15 @@ fun CalendarWeekSection(
                             modifier = Modifier
                                 .size(36.dp)
                                 .background(
-                                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                                    color = MaterialTheme.colorScheme.primary,
                                     shape = CircleShape
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = date.toString(),
-                                color = if (isSystemInDarkTheme()) Color.Black else Color.White,
-                                style = androidx.compose.material3.MaterialTheme.typography.bodyLarge.copy(
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyLarge.copy(
                                     fontWeight = FontWeight.Bold
                                 )
                             )
@@ -71,8 +72,8 @@ fun CalendarWeekSection(
                     } else {
                         Text(
                             text = date.toString(),
-                            color = if (isSystemInDarkTheme()) Color.White else Color.Black,
-                            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }

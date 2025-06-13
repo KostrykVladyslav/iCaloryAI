@@ -1,7 +1,6 @@
 package com.kostryk.icaloryai.ui.main.elements
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.kostryk.icaloryai.theme.isDarkTheme
 import icaloryai.composeapp.generated.resources.Res
 import icaloryai.composeapp.generated.resources.camera
 import icaloryai.composeapp.generated.resources.galley
@@ -61,7 +62,7 @@ fun SelectImageBottomSheet(
                     Icon(
                         painter = painterResource(Res.drawable.ic_camera_square),
                         contentDescription = null,
-                        tint = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(Modifier.width(12.dp))
@@ -75,7 +76,7 @@ fun SelectImageBottomSheet(
 
                 Divider(
                     modifier = Modifier.fillMaxWidth(),
-                    color = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
+                    color = if (isDarkTheme()) Color.DarkGray else Color.LightGray
                 )
 
                 Spacer(Modifier.height(24.dp))
@@ -93,7 +94,7 @@ fun SelectImageBottomSheet(
                     Icon(
                         painter = painterResource(Res.drawable.ic_gallery_circle),
                         contentDescription = null,
-                        tint = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(Modifier.width(12.dp))

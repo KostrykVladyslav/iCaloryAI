@@ -1,42 +1,44 @@
 package com.kostryk.icaloryai.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import com.kostryk.icaloryai.arch.settings.getSettings
+import androidx.compose.ui.graphics.Color
+import com.kostryk.icaloryai.arch.manager.theme.ThemeManager
+import org.koin.compose.koinInject
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
-    tertiary = Pink80
+    tertiary = Pink80,
+    onPrimary = Color.White,
+    onSecondary = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40,
+    onPrimary = Color.Black,
+    onSecondary = Color.Black
 )
 
 @Composable
 fun isDarkTheme(): Boolean {
-    return isSystemInDarkTheme()
+    val themeManager = koinInject<ThemeManager>()
+    return themeManager.isDarkTheme()
 }
 
 @Composable
 fun iCaloryAITheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    isDarkTheme: Boolean = isDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        darkTheme -> DarkColorScheme
+        isDarkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    MaterialTheme(colorScheme = colorScheme, typography = Typography, content = content)
 }
