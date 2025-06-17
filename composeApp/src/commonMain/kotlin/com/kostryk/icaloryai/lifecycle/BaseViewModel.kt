@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
@@ -25,6 +28,22 @@ open class BaseViewModel : ViewModel() {
         block: suspend CoroutineScope.() -> Unit
     ): Job {
         return viewModelScope.launch(errorHandler) {
+            withContext(context) {
+                if (supervisor) {
+                    supervisorScope { block.invoke(this) }
+                } else {
+                    block.invoke(this)
+                }
+            }
+        }
+    }
+
+    protected fun <T> async(
+        supervisor: Boolean = false,
+        context: CoroutineContext = Dispatchers.IO,
+        block: suspend CoroutineScope.() -> T
+    ): Deferred<T> {
+        return viewModelScope.async(errorHandler) {
             withContext(context) {
                 if (supervisor) {
                     supervisorScope { block.invoke(this) }

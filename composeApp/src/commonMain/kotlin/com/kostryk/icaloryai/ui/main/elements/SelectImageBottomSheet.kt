@@ -68,7 +68,7 @@ fun SelectImageBottomSheet(
                     Spacer(Modifier.width(12.dp))
                     Text(
                         text = stringResource(Res.string.camera),
-                        style = androidx.compose.material3.MaterialTheme.typography.headlineMedium
+                        style = MaterialTheme.typography.headlineMedium
                     )
                 }
 
@@ -100,7 +100,7 @@ fun SelectImageBottomSheet(
                     Spacer(Modifier.width(12.dp))
                     Text(
                         text = stringResource(Res.string.galley),
-                        style = androidx.compose.material3.MaterialTheme.typography.headlineMedium
+                        style = MaterialTheme.typography.headlineMedium
                     )
                 }
 

@@ -20,7 +20,7 @@ import com.kostryk.icaloryai.theme.isDarkTheme
 
 @Composable
 fun CaloriesAndMacrosSection(
-    caloriesLeft: Int,
+    calories: Pair<Int, Int>,
     protein: Pair<Int, Int>,
     fat: Pair<Int, Int>,
     carbs: Pair<Int, Int>
@@ -39,7 +39,10 @@ fun CaloriesAndMacrosSection(
                 modifier = Modifier.size(120.dp),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressBar(percentage = 0.5f, calories = caloriesLeft)
+                CircularProgressBar(
+                    percentage = calories.first / calories.second.toFloat(),
+                    calories = calories.second - calories.first
+                )
             }
             Spacer(Modifier.width(24.dp))
             Column(modifier = Modifier.weight(1f)) {

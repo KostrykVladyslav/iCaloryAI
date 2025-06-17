@@ -71,6 +71,7 @@ class DishRepositoryImpl(
             } catch (e: Exception) {
                 e.printStackTrace()
                 flow.emit(CreateDishStatusEntity.Error(e.message.orEmpty()))
+                flow.emit(CreateDishStatusEntity.Success)
             }
         }
         return flow

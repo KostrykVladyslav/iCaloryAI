@@ -47,8 +47,8 @@ fun DishSection(
                 if (isDarkTheme()) Color.DarkGray else Color.White,
                 RoundedCornerShape(16.dp)
             )
-            .clickable { onDishSelected(dish) }
             .clip(RoundedCornerShape(16.dp))
+            .clickable { onDishSelected(dish) }
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {

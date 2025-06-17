@@ -18,9 +18,9 @@ import androidx.compose.ui.unit.dp
 import com.kostryk.icaloryai.theme.isDarkTheme
 
 @Composable
-fun NoDishesSection() {
+fun NoDishesSection(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(
                 if (isDarkTheme()) Color.DarkGray else Color.White,

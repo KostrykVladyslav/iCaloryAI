@@ -13,8 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,8 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import com.kostryk.icaloryai.theme.isDarkTheme
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
@@ -37,12 +35,7 @@ fun AlertMessageDialog(
     onPositiveClick: () -> Unit = {},
     onNegativeClick: () -> Unit = {}
 ) {
-    Dialog(
-        onDismissRequest = {}, properties = DialogProperties(
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false,
-        )
-    ) {
+    Dialog(onDismissRequest = onNegativeClick) {
         Surface(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
             shape = RoundedCornerShape(size = 12.dp)
@@ -82,8 +75,8 @@ fun AlertMessageDialog(
                             modifier = Modifier.weight(1f), onClick = {
                                 onNegativeClick()
                             }, colors = ButtonDefaults.buttonColors(
-                                contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
-                                backgroundColor = if (isDarkTheme()) Color.White else Color.Black
+                                contentColor = Color.White,
+                                backgroundColor = Color.Black
                             )
                         ) {
                             Text(text = it, textAlign = TextAlign.Center, maxLines = 1)
@@ -96,8 +89,8 @@ fun AlertMessageDialog(
                             modifier = Modifier.weight(1f), onClick = {
                                 onPositiveClick()
                             }, colors = ButtonDefaults.buttonColors(
-                                contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
-                                backgroundColor = if (isDarkTheme()) Color.White else Color.Black
+                                contentColor = Color.White,
+                                backgroundColor = Color.Black
                             )
                         ) {
                             Text(text = it, textAlign = TextAlign.Center, maxLines = 1)

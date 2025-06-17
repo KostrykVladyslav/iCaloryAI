@@ -12,6 +12,9 @@ interface SettingsManager {
         const val USER_HEIGHT_KEY = "user_height"
         const val USER_CURRENT_WEIGHT_KEY = "user_current_weight"
         const val DAILY_CALORIE_INTAKE_KEY = "user_calorie_intake"
+        const val DAILY_PROTEIN_INTAKE_KEY = "user_protein_intake"
+        const val DAILY_FAT_INTAKE_KEY = "user_fat_intake"
+        const val DAILY_CARBS_INTAKE_KEY = "user_carbs_intake"
         const val SELECTED_THEME_KEY = "selected_theme"
     }
 }

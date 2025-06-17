@@ -1,6 +1,7 @@
 package com.kostryk.icaloryai.ui.main.elements
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +26,8 @@ import com.kostryk.icaloryai.theme.isDarkTheme
 @Composable
 fun CalendarWeekSection(
     daysAndDates: List<Pair<String, Int>>,
-    selectedIndex: Int
+    selectedIndex: Int,
+    onDateSelected: (Int) -> Unit
 ) {
     val days = daysAndDates.map { it.first }
     val dates = daysAndDates.map { it.second }
@@ -74,7 +76,9 @@ fun CalendarWeekSection(
                             text = date.toString(),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.align(Alignment.Center)
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .clickable { onDateSelected(idx) }
                         )
                     }
                 }

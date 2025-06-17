@@ -5,6 +5,7 @@ import com.kostryk.icaloryai.arch.database.AppDatabase
 import com.kostryk.icaloryai.arch.manager.theme.ThemeManager
 import com.kostryk.icaloryai.domain.database.dao.DishDatabaseDao
 import com.kostryk.icaloryai.domain.manager.settings.SettingsManager
+import com.kostryk.icaloryai.domain.manager.time.DateTimeManager
 import com.kostryk.icaloryai.domain.usecase.dish.CreateDishUseCase
 import com.kostryk.icaloryai.domain.usecase.dish.GetAllDishesUseCase
 import com.kostryk.icaloryai.getPlatform
@@ -23,7 +24,9 @@ val appMainModule = module {
     viewModel<MainViewModel> {
         MainViewModel(
             getAllDishesUseCase = get<GetAllDishesUseCase>(),
-            createDishUseCase = get<CreateDishUseCase>()
+            createDishUseCase = get<CreateDishUseCase>(),
+            dateManager = get<DateTimeManager>(),
+            settingsManager = get<SettingsManager>()
         )
     }
     viewModel<ProfileViewModel> {
