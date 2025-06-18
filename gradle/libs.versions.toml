@@ -1,17 +1,18 @@
 [versions]
-agp = "8.5.2"
+agp = "8.6.0"
 android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
 androidx-activityCompose = "1.10.1"
 androidx-lifecycle = "2.8.4"
 compose-multiplatform = "1.7.3"
-koin = "3.5.6"
+koin = "4.1.0-RC1"
 koinCompose = "1.1.5"
 koinComposeViewModel = "1.2.0-Beta4"
 kotlinxCoroutinesCore = "1.10.2"
 kotlinxDatetime = "0.6.2"
 kotlinxSerializationJson = "1.5.1"
+lifecycleViewmodelCompose = "2.9.1"
 multiplatformSettings = "1.0.0"
 navigation = "2.8.0-alpha08"
 kotlin = "2.1.21"
@@ -36,6 +37,7 @@ androidx-navigation = { group = "org.jetbrains.androidx.navigation", name = "nav
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions" }
 compose-shimmer = { module = "com.valentinilk.shimmer:compose-shimmer", version.ref = "composeShimmer" }

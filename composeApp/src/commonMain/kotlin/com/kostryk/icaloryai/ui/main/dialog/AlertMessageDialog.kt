@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
@@ -48,20 +49,20 @@ fun AlertMessageDialog(
                 Text(
                     text = title,
                     fontWeight = FontWeight.Medium,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
-                    style = androidx.compose.material3.MaterialTheme.typography.headlineLarge.copy(
+                    style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold
                     )
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                message?.let {
+                if (message != null) {
                     Text(
-                        text = it,
-                        fontSize = MaterialTheme.typography.h6.fontSize,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
+                        text = message.toString(),
+                        color = MaterialTheme.colorScheme.onPrimary,
                         textAlign = TextAlign.Center,
-                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 22.sp
                     )
                 }
                 Spacer(modifier = Modifier.height(15.dp))
@@ -76,7 +77,7 @@ fun AlertMessageDialog(
                                 onNegativeClick()
                             }, colors = ButtonDefaults.buttonColors(
                                 contentColor = Color.White,
-                                backgroundColor = Color.Black
+                                containerColor = Color.Black
                             )
                         ) {
                             Text(text = it, textAlign = TextAlign.Center, maxLines = 1)
@@ -88,9 +89,10 @@ fun AlertMessageDialog(
                         Button(
                             modifier = Modifier.weight(1f), onClick = {
                                 onPositiveClick()
-                            }, colors = ButtonDefaults.buttonColors(
+                            },
+                            colors = ButtonDefaults.buttonColors(
                                 contentColor = Color.White,
-                                backgroundColor = Color.Black
+                                containerColor = Color.Black
                             )
                         ) {
                             Text(text = it, textAlign = TextAlign.Center, maxLines = 1)

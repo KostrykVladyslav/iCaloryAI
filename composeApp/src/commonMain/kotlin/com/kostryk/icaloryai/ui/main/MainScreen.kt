@@ -63,7 +63,7 @@ fun MainScreen(navController: NavController) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     val selectedDate by viewModel.selectedDate.collectAsState(viewModel.getCurrentDate())
-    val selectedWeekIndex by viewModel.selectedWeekIndex.collectAsState(0)
+    val selectedWeekIndex by viewModel.selectedWeekIndex.collectAsState(null)
     val weeks by viewModel.weeks.collectAsState(emptyList())
 
     Scaffold(
@@ -110,7 +110,7 @@ fun MainScreen(navController: NavController) {
             Spacer(Modifier.height(16.dp))
             val pagerState = rememberPagerState(
                 pageCount = { weeks.size },
-                initialPage = selectedWeekIndex
+                initialPage = selectedWeekIndex ?: 0
             )
             val dishesWithImages = viewModel.dishesWithImages.collectAsState(listOf())
             val createDishResult = viewModel.createDishResult.collectAsState(null)
@@ -121,7 +121,10 @@ fun MainScreen(navController: NavController) {
 
             LazyColumn {
                 item {
-                    HorizontalPager(state = pagerState, reverseLayout = true) { page ->
+                    HorizontalPager(
+                        state = pagerState,
+                        reverseLayout = true
+                    ) { page ->
                         val currentWeek = weeks[page]
                         CalendarWeekSection(
                             daysAndDates = listOf(

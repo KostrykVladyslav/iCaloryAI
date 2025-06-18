@@ -42,20 +42,17 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        val androidMain by getting {
-            dependsOn(commonMain.get())
-            dependencies {
-                implementation(compose.preview)
-                implementation(libs.androidx.activity.compose)
-                implementation(libs.accompanist.permissions)
-                implementation(libs.koin.android)
-            }
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.accompanist.permissions)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
             implementation(compose.material3)
+            implementation(compose.animation)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(libs.androidx.lifecycle.viewmodel)
@@ -130,7 +127,7 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
     add("kspAndroid", libs.androidx.room.compiler)
-    // add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-    // add("kspIosX64", libs.androidx.room.compiler)
-    // add("kspIosArm64", libs.androidx.room.compiler)
+     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+     add("kspIosX64", libs.androidx.room.compiler)
+     add("kspIosArm64", libs.androidx.room.compiler)
 }

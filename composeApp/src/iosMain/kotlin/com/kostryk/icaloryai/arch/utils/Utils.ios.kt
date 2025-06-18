@@ -37,25 +37,25 @@ import platform.CoreGraphics.CGSizeMake
 
 @OptIn(ExperimentalForeignApi::class)
 actual fun byteArrayToImageBitmapWithResize(bytes: ByteArray): ImageBitmap {
-    val uiImage = UIImage(byteArrayToNSData(bytes))
+//    val uiImage = UIImage(byteArrayToNSData(bytes))
+//
+//    val newWidth = uiImage.size.useContents { width } / 5.0
+//    val newHeight = uiImage.size.useContents { height } / 5.0
+//
+//    UIGraphicsBeginImageContextWithOptions(
+//        size = CGSizeMake(newWidth, newHeight),
+//        false,
+//        1.0
+//    )
+//    uiImage.drawInRect(CGRectMake(0.0, 0.0, newWidth, newHeight))
+//    val resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+//    UIGraphicsEndImageContext()
+//
+//    val jpegData = resizedImage?.JPEGRepresentation(0.8) ?: return ImageBitmap(1, 1)
+//    val resizedBytes = ByteArray(jpegData.length.toInt())
+//    jpegData.getBytes(resizedBytes.refTo(0), jpegData.length)
 
-    val newWidth = uiImage.size.useContents { width } / 5.0
-    val newHeight = uiImage.size.useContents { height } / 5.0
-
-    UIGraphicsBeginImageContextWithOptions(
-        size = CGSizeMake(newWidth, newHeight),
-        false,
-        1.0
-    )
-    uiImage.drawInRect(CGRectMake(0.0, 0.0, newWidth, newHeight))
-    val resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
-
-    val jpegData = resizedImage?.JPEGRepresentation(0.8) ?: return ImageBitmap(1, 1)
-    val resizedBytes = ByteArray(jpegData.length.toInt())
-    jpegData.getBytes(resizedBytes.refTo(0), jpegData.length)
-
-    return byteArrayToImageBitmap(resizedBytes)
+    return byteArrayToImageBitmap(bytes)
 }
 
 actual fun byteArrayToImageBitmap(bytes: ByteArray): ImageBitmap {

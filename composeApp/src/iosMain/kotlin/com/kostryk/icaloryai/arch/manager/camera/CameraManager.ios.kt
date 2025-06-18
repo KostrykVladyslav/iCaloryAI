@@ -36,7 +36,7 @@ actual fun rememberCameraManager(onResult: (SharedImage?) -> Unit): CameraManage
     return remember {
         CameraManager {
             imagePicker.setSourceType(UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera)
-            imagePicker.setAllowsEditing(true)
+            imagePicker.setAllowsEditing(false)
             imagePicker.setCameraCaptureMode(UIImagePickerControllerCameraCaptureMode.UIImagePickerControllerCameraCaptureModePhoto)
             imagePicker.setDelegate(cameraDelegate)
             UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(
