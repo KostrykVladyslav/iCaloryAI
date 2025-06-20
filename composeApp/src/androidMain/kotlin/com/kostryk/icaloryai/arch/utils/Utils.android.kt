@@ -11,7 +11,7 @@ actual fun byteArrayToImageBitmap(bytes: ByteArray): ImageBitmap {
 
 actual fun byteArrayToImageBitmapWithResize(bytes: ByteArray): ImageBitmap {
     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, BitmapFactory.Options().apply {
-        inSampleSize = 5
+        inSampleSize = 20
     })
     return bitmap.asImageBitmap()
 }

@@ -16,6 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.kostryk.icaloryai.theme.CarbsColor
+import com.kostryk.icaloryai.theme.FatColor
+import com.kostryk.icaloryai.theme.ProteinColor
 import com.kostryk.icaloryai.theme.isDarkTheme
 
 @Composable
@@ -46,11 +49,11 @@ fun CaloriesAndMacrosSection(
             }
             Spacer(Modifier.width(24.dp))
             Column(modifier = Modifier.weight(1f)) {
-                MacroProgressBar("Protein", protein.first, protein.second)
+                MacroProgressBar("Protein", ProteinColor, protein.first, protein.second)
                 Spacer(Modifier.height(8.dp))
-                MacroProgressBar("Fat", fat.first, fat.second)
+                MacroProgressBar("Fat", FatColor, fat.first, fat.second)
                 Spacer(Modifier.height(8.dp))
-                MacroProgressBar("Carbs", carbs.first, carbs.second)
+                MacroProgressBar("Carbs", CarbsColor, calories.first, carbs.second)
             }
         }
     }

@@ -5,28 +5,22 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -60,172 +55,181 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @Composable
 fun MainScreen(navController: NavController) {
     val viewModel = koinViewModel<MainViewModel>()
-    var showBottomSheet by remember { mutableStateOf(false) }
 
     val selectedDate by viewModel.selectedDate.collectAsState(viewModel.getCurrentDate())
-    val selectedWeekIndex by viewModel.selectedWeekIndex.collectAsState(null)
-    val weeks by viewModel.weeks.collectAsState(emptyList())
 
-    Scaffold(
+    val dishesWithImages = viewModel.dishesWithImages.collectAsState(listOf())
+    var showAlertData: Pair<String, String>? by remember { mutableStateOf(null) }
+
+    val weeks by viewModel.weeks.collectAsState(emptyList())
+    val selectedWeekIndex by viewModel.selectedWeekIndex.collectAsState(null)
+
+    val pagerState = rememberPagerState(
+        pageCount = { weeks.size },
+        initialPage = selectedWeekIndex ?: 0
+    )
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect {
+            viewModel.onWeekChanged(it)
+        }
+    }
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing),
-        topBar = { MainScreenToolbar(navController) },
-        floatingActionButton = {
-            AnimatedVisibility(
-                visible = selectedDate == viewModel.getCurrentDate(),
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Box(
-                    Modifier.shadow(4.dp, RoundedCornerShape(20.dp))
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(20.dp)
-                        ).clickable(
-                            interactionSource = null,
-                            indication = null
-                        ) { showBottomSheet = !showBottomSheet }
+            .padding(horizontal = 16.dp)
+    ) {
+        item { MainScreenToolbar(navController) }
+
+        item { Spacer(Modifier.height(16.dp)) }
+
+        item {
+            HorizontalPager(
+                state = pagerState,
+                reverseLayout = true
+            ) { page ->
+                val currentWeek = weeks[page]
+                CalendarWeekSection(
+                    daysAndDates = listOf(
+                        "Mon" to currentWeek[0].split("-").last().toInt(),
+                        "Tue" to currentWeek[1].split("-").last().toInt(),
+                        "Wed" to currentWeek[2].split("-").last().toInt(),
+                        "Tue" to currentWeek[3].split("-").last().toInt(),
+                        "Fri" to currentWeek[4].split("-").last().toInt(),
+                        "Sat" to currentWeek[5].split("-").last().toInt(),
+                        "Sun" to currentWeek[6].split("-").last().toInt()
+                    ),
+                    selectedIndex = currentWeek.indexOf(selectedDate).takeIf { it >= 0 }
+                        ?: 0
                 ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_plus),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .size(width = 70.dp, height = 40.dp)
-                            .padding(8.dp)
-                    )
+                    viewModel.onDateSelected(currentWeek[it])
                 }
             }
-        },
-        floatingActionButtonPosition = FabPosition.Center
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .padding(it)
-                .scrollable(rememberScrollState(), Orientation.Vertical)
-        ) {
+        }
+
+        item {
             Spacer(Modifier.height(16.dp))
-            val pagerState = rememberPagerState(
-                pageCount = { weeks.size },
-                initialPage = selectedWeekIndex ?: 0
+        }
+
+        item {
+            val caloriesSpend = viewModel.caloriesSpend.collectAsState(0)
+            val proteinSpend = viewModel.proteinSpend.collectAsState(0)
+            val fatSpend = viewModel.farSpend.collectAsState(0)
+            val carbsSpend = viewModel.carbsSpend.collectAsState(0)
+
+            CaloriesAndMacrosSection(
+                calories = caloriesSpend.value to viewModel.getCalorieIntake(),
+                protein = proteinSpend.value to viewModel.getProteinIntake(),
+                fat = fatSpend.value to viewModel.getFatIntake(),
+                carbs = carbsSpend.value to viewModel.getCarbsIntake()
             )
-            val dishesWithImages = viewModel.dishesWithImages.collectAsState(listOf())
+        }
+
+        item {
+            Spacer(Modifier.height(32.dp))
+        }
+
+        item {
+            Text(
+                text = "Recently",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+
+        if (dishesWithImages.value.isEmpty()) {
+            item { NoDishesSection(Modifier.animateItem()) }
+        }
+
+        val images = dishesWithImages.value.map { it.first }
+        val dishes = dishesWithImages.value.map { it.second }
+        dishes.forEachIndexed { index, dish ->
+            item {
+                DishSection(
+                    image = images[index],
+                    dish = dish,
+                    onDishSelected = {
+
+                    },
+                    modifier = Modifier.animateItem()
+                )
+                Spacer(Modifier.height(12.dp))
+            }
+        }
+
+        item {
             val createDishResult = viewModel.createDishResult.collectAsState(null)
 
-            var alertDialogTitle by remember { mutableStateOf("") }
-            var alertDialogDescription by remember { mutableStateOf("") }
-            var showAlertDialog by remember { mutableStateOf(false) }
-
-            LazyColumn {
-                item {
-                    HorizontalPager(
-                        state = pagerState,
-                        reverseLayout = true
-                    ) { page ->
-                        val currentWeek = weeks[page]
-                        CalendarWeekSection(
-                            daysAndDates = listOf(
-                                "Mon" to currentWeek[0].split("-").last().toInt(),
-                                "Tue" to currentWeek[1].split("-").last().toInt(),
-                                "Wed" to currentWeek[2].split("-").last().toInt(),
-                                "Tue" to currentWeek[3].split("-").last().toInt(),
-                                "Fri" to currentWeek[4].split("-").last().toInt(),
-                                "Sat" to currentWeek[5].split("-").last().toInt(),
-                                "Sun" to currentWeek[6].split("-").last().toInt()
-                            ),
-                            selectedIndex = currentWeek.indexOf(selectedDate).takeIf { it >= 0 }
-                                ?: 0
-                        ) {
-                            viewModel.onDateSelected(currentWeek[it])
-                        }
+            when (val result = createDishResult.value) {
+                is CreateDishStatusEntity.Loading -> {
+                    if (dishesWithImages.value.isEmpty()) {
+                        Spacer(Modifier.height(12.dp))
                     }
-                    Spacer(Modifier.height(16.dp))
-
-                    val caloriesSpend = viewModel.caloriesSpend.collectAsState(0)
-                    val proteinSpend = viewModel.proteinSpend.collectAsState(0)
-                    val fatSpend = viewModel.farSpend.collectAsState(0)
-                    val carbsSpend = viewModel.carbsSpend.collectAsState(0)
-
-                    CaloriesAndMacrosSection(
-                        calories = caloriesSpend.value to viewModel.getCalorieIntake(),
-                        protein = proteinSpend.value to viewModel.getProteinIntake(),
-                        fat = fatSpend.value to viewModel.getFatIntake(),
-                        carbs = carbsSpend.value to viewModel.getCarbsIntake()
-                    )
-                    Spacer(Modifier.height(32.dp))
-
-                    Text(
-                        text = "Recently",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
+                    DishLoadingSection(modifier = Modifier.animateItem())
                 }
 
-                if (dishesWithImages.value.isEmpty()) {
-                    item { NoDishesSection(Modifier.animateItem()) }
-                } else {
-                    val images = dishesWithImages.value.map { it.first }
-                    val dishes = dishesWithImages.value.map { it.second }
-                    dishes.forEachIndexed { index, dish ->
-                        item {
-                            DishSection(
-                                image = images[index],
-                                dish = dish,
-                                onDishSelected = {
-
-                                },
-                                modifier = Modifier.animateItem()
-                            )
-                            Spacer(Modifier.height(12.dp))
-                        }
-                    }
-                }
-
-                when (val result = createDishResult.value) {
-                    is CreateDishStatusEntity.Loading -> item {
-                        if (dishesWithImages.value.isEmpty()) {
-                            Spacer(Modifier.height(12.dp))
-                        }
-                        DishLoadingSection(modifier = Modifier.animateItem())
-                    }
-
-                    is CreateDishStatusEntity.Error -> {
-                        alertDialogTitle = "Error"
-                        alertDialogDescription = result.message
-                        showAlertDialog = true
-                    }
-
-                    else -> {}
-                }
-
-                item {
-                    Spacer(Modifier.height(56.dp))
-                }
+                is CreateDishStatusEntity.Error -> showAlertData = "Error" to result.message
+                else -> {}
             }
+        }
 
-            if (showAlertDialog) {
-                AlertMessageDialog(
-                    title = alertDialogTitle,
-                    message = alertDialogDescription,
-                    positiveButtonText = "Ok",
-                    negativeButtonText = "Cancel",
-                    onPositiveClick = {
-                        showAlertDialog = false
-                    },
-                    onNegativeClick = {
-                        showAlertDialog = false
-                    })
-            }
-            LaunchedEffect(pagerState) {
-                snapshotFlow { pagerState.currentPage }.collect {
-                    viewModel.onWeekChanged(it)
-                }
+        item {
+            Spacer(Modifier.height(96.dp))
+        }
+    }
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .padding(26.dp),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AnimatedVisibility(
+            visible = selectedDate == viewModel.getCurrentDate(),
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .padding(26.dp)
+                .wrapContentSize()
+        ) {
+            Box(
+                Modifier.shadow(4.dp, RoundedCornerShape(20.dp))
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(20.dp)
+                    ).clickable(
+                        interactionSource = null,
+                        indication = null
+                    ) { showBottomSheet = !showBottomSheet }
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_plus),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .size(width = 70.dp, height = 40.dp)
+                        .padding(8.dp)
+                )
             }
         }
     }
 
     DrawImagePicker(showBottomSheet, viewModel) { showBottomSheet = false }
+
+    if (showAlertData != null) {
+        AlertMessageDialog(
+            title = showAlertData?.first.orEmpty(),
+            message = showAlertData?.first.orEmpty(),
+            positiveButtonText = "Ok",
+            negativeButtonText = "Cancel",
+            onPositiveClick = {
+                showAlertData = null
+            },
+            onNegativeClick = {
+                showAlertData = null
+            })
+    }
 }

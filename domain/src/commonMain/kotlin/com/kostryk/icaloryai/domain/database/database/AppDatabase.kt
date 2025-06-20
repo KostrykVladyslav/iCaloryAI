@@ -1,4 +1,4 @@
-package com.kostryk.icaloryai.arch.database
+package com.kostryk.icaloryai.domain.database.database
 
 import androidx.room.ConstructedBy
 import androidx.room.Database

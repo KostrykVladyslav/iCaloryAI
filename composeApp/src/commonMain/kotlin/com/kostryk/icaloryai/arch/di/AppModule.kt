@@ -1,9 +1,9 @@
 package com.kostryk.icaloryai.arch.di
 
 import com.kostryk.icaloryai.Platform
-import com.kostryk.icaloryai.arch.database.AppDatabase
 import com.kostryk.icaloryai.arch.manager.theme.ThemeManager
 import com.kostryk.icaloryai.domain.database.dao.DishDatabaseDao
+import com.kostryk.icaloryai.domain.database.database.AppDatabase
 import com.kostryk.icaloryai.domain.manager.settings.SettingsManager
 import com.kostryk.icaloryai.domain.manager.time.DateTimeManager
 import com.kostryk.icaloryai.domain.usecase.dish.CreateDishUseCase

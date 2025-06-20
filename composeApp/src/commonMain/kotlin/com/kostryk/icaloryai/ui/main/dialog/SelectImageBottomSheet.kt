@@ -1,4 +1,4 @@
-package com.kostryk.icaloryai.ui.main.elements
+package com.kostryk.icaloryai.ui.main.dialog
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,9 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kostryk.icaloryai.theme.isDarkTheme
 import com.kostryk.icaloryai.ui.profile.elements.Divider
 import icaloryai.composeapp.generated.resources.Res
 import icaloryai.composeapp.generated.resources.camera

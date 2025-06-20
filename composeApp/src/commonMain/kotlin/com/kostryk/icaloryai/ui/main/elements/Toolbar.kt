@@ -13,6 +13,8 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -29,7 +31,10 @@ fun MainScreenToolbar(navController: NavController) {
     TopAppBar(
         title = {
             Text(
-                text = stringResource(Res.string.app_name),
+                text = buildAnnotatedString {
+                    append(stringResource(Res.string.app_name))
+                    addStyle(SpanStyle(color = MaterialTheme.colorScheme.primary), 0, 1)
+                },
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.Bold
                 ),

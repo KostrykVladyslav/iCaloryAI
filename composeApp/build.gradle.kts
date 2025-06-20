@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -34,6 +33,10 @@ kotlin {
             xcf.add(this)
             binaryOption("bundleId", "com.kostryk.icaloryai")
             binaryOption("bundleVersion", "1")
+            freeCompilerArgs += listOf(
+                "-Xexport-kdoc",
+                "-Xexpect-actual-classes"
+            )
         }
     }
 
@@ -66,13 +69,12 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
-            // database
+            //database
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.sqlite)
 
             implementation(libs.compose.shimmer)
-
             //modules
             implementation(projects.domain)
             implementation(projects.data)
@@ -126,8 +128,4 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    add("kspAndroid", libs.androidx.room.compiler)
-     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-     add("kspIosX64", libs.androidx.room.compiler)
-     add("kspIosArm64", libs.androidx.room.compiler)
 }

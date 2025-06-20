@@ -4,6 +4,7 @@ import platform.Foundation.NSHomeDirectory
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.kostryk.icaloryai.domain.database.database.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 

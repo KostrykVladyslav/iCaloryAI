@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.kostryk.icaloryai.theme.isDarkTheme
 
 @Composable
-fun MacroProgressBar(name: String, value: Int, max: Int) {
+fun MacroProgressBar(name: String, color: Color, value: Int, max: Int) {
     val fraction = if (max == 0) 0f else value.toFloat() / max.toFloat()
     val animatedFraction: Float by animateFloatAsState(
         targetValue = fraction,
@@ -38,7 +38,7 @@ fun MacroProgressBar(name: String, value: Int, max: Int) {
                 color = if (isDarkTheme()) Color.White else Color.Black
             )
             Text(
-                text = "$value/$max${if (name == "Protein" || name == "Fat" || name == "Carbs") "g" else ""}",
+                text = "$value/${max}g",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray
             )
@@ -53,7 +53,7 @@ fun MacroProgressBar(name: String, value: Int, max: Int) {
                 Modifier
                     .fillMaxWidth(animatedFraction)
                     .height(6.dp)
-                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(3.dp))
+                    .background(color, RoundedCornerShape(3.dp))
             )
         }
     }

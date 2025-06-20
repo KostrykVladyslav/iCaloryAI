@@ -3,7 +3,6 @@ package com.kostryk.icaloryai.ui.main.elements
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,6 +15,7 @@ import com.kostryk.icaloryai.arch.manager.permissions.PermissionType
 import com.kostryk.icaloryai.arch.manager.permissions.createPermissionsManager
 import com.kostryk.icaloryai.ui.main.MainViewModel
 import com.kostryk.icaloryai.ui.main.dialog.AlertMessageDialog
+import com.kostryk.icaloryai.ui.main.dialog.SelectImageBottomSheet
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,8 +41,8 @@ fun DrawImagePicker(
             when (status) {
                 PermissionStatus.GRANTED -> {
                     when (permissionType) {
-                        PermissionType.CAMERA -> launchCamera = true
-                        PermissionType.GALLERY -> launchGallery = true
+                        PermissionType.CAMERA -> { launchCamera = false }
+                        PermissionType.GALLERY -> { launchGallery = false}
                     }
                 }
 
