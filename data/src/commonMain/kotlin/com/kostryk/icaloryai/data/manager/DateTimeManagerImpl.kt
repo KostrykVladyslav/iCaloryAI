@@ -2,7 +2,6 @@ package com.kostryk.icaloryai.data.manager
 
 import com.kostryk.icaloryai.domain.manager.time.DateTimeManager
 import com.kostryk.icaloryai.domain.manager.time.DateTimeManager.Companion.DAYS_IN_YEAR
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -11,7 +10,10 @@ import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 class DateTimeManagerImpl : DateTimeManager {
 
     override fun getCurrentDateTime() = getCurrentDateTime(DateTimeManager.DEFAULT_DATE_TIME_FORMAT)
@@ -32,18 +34,12 @@ class DateTimeManagerImpl : DateTimeManager {
         var days = mutableListOf<String>()
         repeat(count) {
             repeat(DateTimeManager.DAYS_IN_WEEK) {
-                if (currentDayOfYear < 0) {
+                if (currentDayOfYear <= 0) {
                     currentYear = currentYear - 1
                     currentDayOfYear = DAYS_IN_YEAR
                 }
 
-                val displayDayOfYear = if (currentDayOfYear.toString().length < 3) {
-                    "0$currentDayOfYear"
-                } else if (currentDayOfYear.toString().length < 2) {
-                    "00$currentDayOfYear"
-                } else {
-                    currentDayOfYear.toString()
-                }
+                val displayDayOfYear = currentDayOfYear.toString().padStart(3, '0')
 
                 days.add(
                     LocalDate.Companion.parse(
@@ -79,10 +75,11 @@ class DateTimeManagerImpl : DateTimeManager {
 
     fun getLastDayOfWeek(): LocalDate {
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        var currentDayOfYear = now.date.dayOfYear
-        var currentYear = now.date.year
-        return LocalDate.Companion.parse(
-            "${currentDayOfYear - (now.dayOfWeek.ordinal - DateTimeManager.DAYS_IN_WEEK)}-$currentYear",
+        val currentDayOfYear = now.date.dayOfYear
+        val currentYear = now.date.year
+        val targetDay = currentDayOfYear - (now.dayOfWeek.ordinal - DateTimeManager.DAYS_IN_WEEK)
+        return LocalDate.parse(
+            "${targetDay.toString().padStart(3, '0')}-$currentYear",
             LocalDate.Format {
                 dayOfYear()
                 char('-')

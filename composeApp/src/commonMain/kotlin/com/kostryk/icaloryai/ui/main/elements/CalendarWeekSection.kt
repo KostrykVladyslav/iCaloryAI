@@ -21,21 +21,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.kostryk.icaloryai.theme.isDarkTheme
+import com.kostryk.icaloryai.ui.main.CalendarDay
+import com.kostryk.icaloryai.ui.main.CalendarWeek
 
 @Composable
 fun CalendarWeekSection(
-    daysAndDates: List<Pair<String, Int>>,
-    selectedIndex: Int,
-    onDateSelected: (Int) -> Unit
+    week: CalendarWeek,
+    onDaySelected: (Int) -> Unit
 ) {
-    val days = daysAndDates.map { it.first }
-    val dates = daysAndDates.map { it.second }
     Column(Modifier.fillMaxWidth()) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            days.forEach { day ->
+            week.days.forEach { day ->
                 Text(
-                    text = day,
+                    text = day.label,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -45,7 +43,7 @@ fun CalendarWeekSection(
         }
         Spacer(Modifier.height(8.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            dates.forEachIndexed { idx, date ->
+            week.days.forEachIndexed { idx, day ->
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -53,33 +51,43 @@ fun CalendarWeekSection(
                         .padding(2.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (idx == selectedIndex) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = CircleShape
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = date.toString(),
-                                color = Color.White,
-                                style = MaterialTheme.typography.bodyLarge.copy(
-                                    fontWeight = FontWeight.Bold
+                    when {
+                        idx == week.selectedDayIndex -> {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = CircleShape
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = day.dayOfMonth.toString(),
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 )
+                            }
+                        }
+                        day.isFuture -> {
+                            Text(
+                                text = day.dayOfMonth.toString(),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                                style = MaterialTheme.typography.bodyLarge
                             )
                         }
-                    } else {
-                        Text(
-                            text = date.toString(),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .clickable { onDateSelected(idx) }
-                        )
+                        else -> {
+                            Text(
+                                text = day.dayOfMonth.toString(),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .clickable { onDaySelected(idx) }
+                            )
+                        }
                     }
                 }
             }

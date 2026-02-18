@@ -11,6 +11,10 @@ interface DishRepository : Repository {
 
     suspend fun getAllDishesAsFlow(): Flow<List<DishEntity>>
 
+    suspend fun getDishById(id: Long): Flow<DishEntity?>
+
+    suspend fun updateDish(dish: DishEntity)
+
     suspend fun createDish(
         description: String,
         imageBytes: ByteArray?

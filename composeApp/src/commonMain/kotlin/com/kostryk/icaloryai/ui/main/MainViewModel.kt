@@ -1,7 +1,6 @@
 package com.kostryk.icaloryai.ui.main
 
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.lifecycle.viewModelScope
 import com.kostryk.icaloryai.arch.manager.file.SharedImage
 import com.kostryk.icaloryai.arch.utils.byteArrayToImageBitmapWithResize
 import com.kostryk.icaloryai.domain.entities.dish.DishEntity
@@ -16,9 +15,28 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlin.coroutines.coroutineContext
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+data class CalendarDay(
+    val label: String,
+    val dayOfMonth: Int,
+    val fullDate: String,
+    val isFuture: Boolean = false
+)
+
+data class CalendarWeek(
+    val days: List<CalendarDay>,
+    val selectedDayIndex: Int
+)
+
+data class MacroState(
+    val calories: Int = 0,
+    val protein: Int = 0,
+    val fat: Int = 0,
+    val carbs: Int = 0
+)
 
 class MainViewModel(
     private val getAllDishesUseCase: GetAllDishesUseCase,
@@ -29,48 +47,48 @@ class MainViewModel(
 
     private val _dishesWithImages =
         MutableStateFlow<List<Pair<ImageBitmap?, DishEntity>>>(emptyList())
-    val dishesWithImages: Flow<List<Pair<ImageBitmap?, DishEntity>>> = _dishesWithImages
+    val dishesWithImages: StateFlow<List<Pair<ImageBitmap?, DishEntity>>> =
+        _dishesWithImages.asStateFlow()
 
     private val _createDishResult = MutableStateFlow<CreateDishStatusEntity?>(null)
-    val createDishResult: Flow<CreateDishStatusEntity?> = _createDishResult
+    val createDishResult: StateFlow<CreateDishStatusEntity?> = _createDishResult.asStateFlow()
 
-    private val _selectedDate = MutableStateFlow<String>(getCurrentDate())
-    val selectedDate: Flow<String> = _selectedDate
+    private val _macroState = MutableStateFlow(MacroState())
+    val macroState: StateFlow<MacroState> = _macroState.asStateFlow()
 
-    private val _selectedWeekIndex = MutableStateFlow<Int>(0)
-    val selectedWeekIndex: Flow<Int> = _selectedWeekIndex
+    private val today: String = getCurrentDate()
+    private val rawWeeks: List<List<String>> = dateManager.createLastWeeks()
 
-    private val _weeks = MutableStateFlow<List<List<String>>>(dateManager.createLastWeeks())
-    val weeks: Flow<List<List<String>>> = _weeks
+    private val _calendarWeeks = MutableStateFlow(buildCalendarWeeks())
+    val calendarWeeks: StateFlow<List<CalendarWeek>> = _calendarWeeks.asStateFlow()
 
-    private val _caloriesSpend = MutableStateFlow<Int>(0)
-    val caloriesSpend: Flow<Int> = _caloriesSpend
-    private val _proteinSpend = MutableStateFlow<Int>(0)
-    val proteinSpend: Flow<Int> = _proteinSpend
-    private val _farSpend = MutableStateFlow<Int>(0)
-    val farSpend: Flow<Int> = _farSpend
-    private val _carbsSpend = MutableStateFlow<Int>(0)
-    val carbsSpend: Flow<Int> = _carbsSpend
+    val initialWeekIndex: Int = 0
+
+    private var loadDishesJob: Job? = null
 
     init {
-        onDateSelected(dateManager.getCurrentDateTime(_selectedDate.value))
+        loadDishesByDate(today)
     }
 
-    fun onDateSelected(date: String) {
-        _selectedDate.value = date
-        loadDishesByDate(date)
+    fun onDaySelected(weekIndex: Int, dayIndex: Int) {
+        val weeks = _calendarWeeks.value.toMutableList()
+        val week = weeks[weekIndex]
+        val day = week.days[dayIndex]
+        if (day.isFuture) return
+        weeks[weekIndex] = week.copy(selectedDayIndex = dayIndex)
+        _calendarWeeks.value = weeks
+        loadDishesByDate(day.fullDate)
     }
 
-    fun onWeekChanged(index: Int) {
-        _selectedWeekIndex.value = index
-        val selectedWeek = _weeks.value.getOrNull(index) ?: return
-        if (selectedWeek.isNotEmpty()) {
-            if (index != 0) {
-                onDateSelected(selectedWeek.first())
-            } else {
-                onDateSelected(getCurrentDate())
-            }
-        }
+    fun onWeekSwiped(weekIndex: Int) {
+        val week = _calendarWeeks.value.getOrNull(weekIndex) ?: return
+        val selectedDay = week.days[week.selectedDayIndex]
+        loadDishesByDate(selectedDay.fullDate)
+    }
+
+    fun getSelectedDate(weekIndex: Int): String {
+        val week = _calendarWeeks.value.getOrNull(weekIndex) ?: return today
+        return week.days[week.selectedDayIndex].fullDate
     }
 
     fun getCurrentDate(format: String = DateTimeManager.DEFAULT_DATE_FORMAT): String {
@@ -78,15 +96,18 @@ class MainViewModel(
     }
 
     fun handleCameraResult(image: SharedImage?) {
+        _createDishResult.value = CreateDishStatusEntity.Loading
         launch(context = Dispatchers.IO) { createDish(imageBytes = image?.toByteArray()) }
     }
 
     fun handleGalleryResult(image: SharedImage?) {
+        _createDishResult.value = CreateDishStatusEntity.Loading
         launch(context = Dispatchers.IO) { createDish(imageBytes = image?.toByteArray()) }
     }
 
     private fun loadDishesByDate(date: String) {
-        launch(context = Dispatchers.IO) {
+        loadDishesJob?.cancel()
+        loadDishesJob = launch(context = Dispatchers.IO) {
             getAllDishesUseCase.execute().collect { dishesList ->
                 handleDishes(dishesList, date)
             }
@@ -104,10 +125,12 @@ class MainViewModel(
         }.awaitAll()
             .apply {
                 _dishesWithImages.emit(this)
-                _caloriesSpend.value = sumOf { it.second.calories }
-                _proteinSpend.value = sumOf { it.second.protein }
-                _farSpend.value = sumOf { it.second.fats }
-                _carbsSpend.value = sumOf { it.second.carbs }
+                _macroState.value = MacroState(
+                    calories = sumOf { it.second.calories },
+                    protein = sumOf { it.second.protein },
+                    fat = sumOf { it.second.fats },
+                    carbs = sumOf { it.second.carbs }
+                )
             }
     }
 
@@ -116,19 +139,52 @@ class MainViewModel(
             .collect { status -> _createDishResult.emit(status) }
     }
 
-    fun getCalorieIntake(): Int {
-        return settingsManager.get(SettingsManager.DAILY_CALORIE_INTAKE_KEY, 2000)
+    fun getCalorieIntake(): Int =
+        settingsManager.get(SettingsManager.DAILY_CALORIE_INTAKE_KEY, 2000)
+
+    fun getProteinIntake(): Int =
+        settingsManager.get(SettingsManager.DAILY_PROTEIN_INTAKE_KEY, 100)
+
+    fun getFatIntake(): Int =
+        settingsManager.get(SettingsManager.DAILY_FAT_INTAKE_KEY, 100)
+
+    fun getCarbsIntake(): Int =
+        settingsManager.get(SettingsManager.DAILY_CARBS_INTAKE_KEY, 100)
+
+    private fun buildCalendarWeeks(): List<CalendarWeek> {
+        return rawWeeks.mapIndexed { weekIndex, dates ->
+            val days = dates.map { it.toCalendarDay(today) }
+            val selectedDayIndex = if (weekIndex == 0) {
+                days.indexOfFirst { it.fullDate == today }.coerceAtLeast(0)
+            } else {
+                days.lastIndex
+            }
+            CalendarWeek(days = days, selectedDayIndex = selectedDayIndex)
+        }
     }
 
-    fun getProteinIntake(): Int {
-        return settingsManager.get(SettingsManager.DAILY_PROTEIN_INTAKE_KEY, 100)
-    }
+    companion object {
+        private val DAY_LABELS = arrayOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
-    fun getFatIntake(): Int {
-        return settingsManager.get(SettingsManager.DAILY_FAT_INTAKE_KEY, 100)
-    }
+        private fun String.toCalendarDay(today: String): CalendarDay {
+            val parts = this.split("-")
+            val year = parts[0].toInt()
+            val month = parts[1].toInt()
+            val dayOfMonth = parts[2].toInt()
+            val dayOfWeekIndex = dayOfWeek(year, month, dayOfMonth)
+            return CalendarDay(
+                label = DAY_LABELS[dayOfWeekIndex],
+                dayOfMonth = dayOfMonth,
+                fullDate = this,
+                isFuture = this > today
+            )
+        }
 
-    fun getCarbsIntake(): Int {
-        return settingsManager.get(SettingsManager.DAILY_CARBS_INTAKE_KEY, 100)
+        private fun dayOfWeek(year: Int, month: Int, day: Int): Int {
+            val t = intArrayOf(0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4)
+            val y = if (month < 3) year - 1 else year
+            val dow = (y + y / 4 - y / 100 + y / 400 + t[month - 1] + day) % 7
+            return (dow + 6) % 7
+        }
     }
 }

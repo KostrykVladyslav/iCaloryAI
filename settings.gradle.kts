@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 rootProject.name = "iCaloryAI"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
@@ -32,3 +34,4 @@ dependencyResolutionManagement {
 include(":composeApp")
 include(":data")
 include(":domain")
+include(":baselineprofile")

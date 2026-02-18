@@ -9,6 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -29,12 +30,12 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun MainScreenToolbar(navController: NavController) {
     TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background
+        ),
         title = {
             Text(
-                text = buildAnnotatedString {
-                    append(stringResource(Res.string.app_name))
-                    addStyle(SpanStyle(color = MaterialTheme.colorScheme.primary), 0, 1)
-                },
+                text = stringResource(Res.string.app_name),
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.Bold
                 ),

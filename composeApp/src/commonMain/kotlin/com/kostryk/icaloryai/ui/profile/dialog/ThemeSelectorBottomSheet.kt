@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,16 +34,14 @@ fun ThemeSelectorBottomSheet(
         onDismissRequest = { onDismiss() },
     ) {
         Column(Modifier.fillMaxWidth()) {
-            Spacer(Modifier.height(24.dp))
-
             Text(
                 text = "Select theme",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(16.dp)
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(horizontal = 24.dp)
             )
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
 
             radioOptions.forEachIndexed { index, text ->
                 Row(
@@ -58,24 +56,22 @@ fun ThemeSelectorBottomSheet(
                             },
                             role = Role.RadioButton
                         )
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 24.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
                         selected = ThemeType.entries[index] == currentThemeType,
-                        colors = RadioButtonColors(
+                        colors = RadioButtonDefaults.colors(
                             selectedColor = MaterialTheme.colorScheme.primary,
-                            unselectedColor = MaterialTheme.colorScheme.onPrimary,
-                            disabledSelectedColor = MaterialTheme.colorScheme.primary,
-                            disabledUnselectedColor = MaterialTheme.colorScheme.onPrimary
+                            unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ),
                         onClick = null
                     )
                     Text(
                         text = text,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(16.dp)
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 16.dp)
                     )
                 }
             }

@@ -5,9 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -15,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.kostryk.icaloryai.domain.entities.result.CreateDishStatusEntity
+import com.kostryk.icaloryai.graph.NavigationRoute
 import com.kostryk.icaloryai.ui.main.dialog.AlertMessageDialog
 import com.kostryk.icaloryai.ui.main.elements.CalendarWeekSection
 import com.kostryk.icaloryai.ui.main.elements.CaloriesAndMacrosSection
@@ -56,142 +57,122 @@ import org.koin.core.annotation.KoinExperimentalAPI
 fun MainScreen(navController: NavController) {
     val viewModel = koinViewModel<MainViewModel>()
 
-    val selectedDate by viewModel.selectedDate.collectAsState(viewModel.getCurrentDate())
+    val calendarWeeks by viewModel.calendarWeeks.collectAsState()
+    val dishesWithImages by viewModel.dishesWithImages.collectAsState()
+    val macroState by viewModel.macroState.collectAsState()
+    val createDishResult by viewModel.createDishResult.collectAsState()
 
-    val dishesWithImages = viewModel.dishesWithImages.collectAsState(listOf())
     var showAlertData: Pair<String, String>? by remember { mutableStateOf(null) }
-
-    val weeks by viewModel.weeks.collectAsState(emptyList())
-    val selectedWeekIndex by viewModel.selectedWeekIndex.collectAsState(null)
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     val pagerState = rememberPagerState(
-        pageCount = { weeks.size },
-        initialPage = selectedWeekIndex ?: 0
+        pageCount = { calendarWeeks.size },
+        initialPage = viewModel.initialWeekIndex
     )
 
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect {
-            viewModel.onWeekChanged(it)
+    val isToday by remember {
+        derivedStateOf {
+            val week = calendarWeeks.getOrNull(pagerState.currentPage)
+            week?.days?.getOrNull(week.selectedDayIndex)?.fullDate == viewModel.getCurrentDate()
         }
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        item { MainScreenToolbar(navController) }
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect {
+            viewModel.onWeekSwiped(it)
+        }
+    }
 
-        item { Spacer(Modifier.height(16.dp)) }
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            item(key = "toolbar") { MainScreenToolbar(navController) }
 
-        item {
-            HorizontalPager(
-                state = pagerState,
-                reverseLayout = true
-            ) { page ->
-                val currentWeek = weeks[page]
-                CalendarWeekSection(
-                    daysAndDates = listOf(
-                        "Mon" to currentWeek[0].split("-").last().toInt(),
-                        "Tue" to currentWeek[1].split("-").last().toInt(),
-                        "Wed" to currentWeek[2].split("-").last().toInt(),
-                        "Tue" to currentWeek[3].split("-").last().toInt(),
-                        "Fri" to currentWeek[4].split("-").last().toInt(),
-                        "Sat" to currentWeek[5].split("-").last().toInt(),
-                        "Sun" to currentWeek[6].split("-").last().toInt()
-                    ),
-                    selectedIndex = currentWeek.indexOf(selectedDate).takeIf { it >= 0 }
-                        ?: 0
-                ) {
-                    viewModel.onDateSelected(currentWeek[it])
+            item(key = "toolbar_spacer") { Spacer(Modifier.height(16.dp)) }
+
+            item(key = "calendar") {
+                HorizontalPager(
+                    state = pagerState,
+                    reverseLayout = true
+                ) { page ->
+                    CalendarWeekSection(
+                        week = calendarWeeks[page]
+                    ) { dayIndex ->
+                        viewModel.onDaySelected(page, dayIndex)
+                    }
                 }
             }
-        }
 
-        item {
-            Spacer(Modifier.height(16.dp))
-        }
+            item(key = "calendar_spacer") {
+                Spacer(Modifier.height(16.dp))
+            }
 
-        item {
-            val caloriesSpend = viewModel.caloriesSpend.collectAsState(0)
-            val proteinSpend = viewModel.proteinSpend.collectAsState(0)
-            val fatSpend = viewModel.farSpend.collectAsState(0)
-            val carbsSpend = viewModel.carbsSpend.collectAsState(0)
+            item(key = "macros") {
+                CaloriesAndMacrosSection(
+                    calories = macroState.calories to viewModel.getCalorieIntake(),
+                    protein = macroState.protein to viewModel.getProteinIntake(),
+                    fat = macroState.fat to viewModel.getFatIntake(),
+                    carbs = macroState.carbs to viewModel.getCarbsIntake()
+                )
+            }
 
-            CaloriesAndMacrosSection(
-                calories = caloriesSpend.value to viewModel.getCalorieIntake(),
-                protein = proteinSpend.value to viewModel.getProteinIntake(),
-                fat = fatSpend.value to viewModel.getFatIntake(),
-                carbs = carbsSpend.value to viewModel.getCarbsIntake()
-            )
-        }
+            item(key = "recently_spacer") {
+                Spacer(Modifier.height(32.dp))
+            }
 
-        item {
-            Spacer(Modifier.height(32.dp))
-        }
+            item(key = "recently_title") {
+                Text(
+                    text = "Recently",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
 
-        item {
-            Text(
-                text = "Recently",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-        }
+            if (dishesWithImages.isEmpty()) {
+                item(key = "no_dishes") { NoDishesSection(Modifier.animateItem()) }
+            }
 
-        if (dishesWithImages.value.isEmpty()) {
-            item { NoDishesSection(Modifier.animateItem()) }
-        }
-
-        val images = dishesWithImages.value.map { it.first }
-        val dishes = dishesWithImages.value.map { it.second }
-        dishes.forEachIndexed { index, dish ->
-            item {
+            items(
+                items = dishesWithImages,
+                key = { it.second.id }
+            ) { (image, dish) ->
                 DishSection(
-                    image = images[index],
+                    image = image,
                     dish = dish,
-                    onDishSelected = {
-
-                    },
+                    onDishSelected = { navController.navigate(NavigationRoute.DishDetails.createRoute(it.id.toString())) },
                     modifier = Modifier.animateItem()
                 )
                 Spacer(Modifier.height(12.dp))
             }
-        }
 
-        item {
-            val createDishResult = viewModel.createDishResult.collectAsState(null)
-
-            when (val result = createDishResult.value) {
-                is CreateDishStatusEntity.Loading -> {
-                    if (dishesWithImages.value.isEmpty()) {
-                        Spacer(Modifier.height(12.dp))
+            item(key = "loading") {
+                when (val result = createDishResult) {
+                    is CreateDishStatusEntity.Loading -> {
+                        if (dishesWithImages.isEmpty()) {
+                            Spacer(Modifier.height(12.dp))
+                        }
+                        DishLoadingSection(modifier = Modifier.animateItem())
                     }
-                    DishLoadingSection(modifier = Modifier.animateItem())
-                }
 
-                is CreateDishStatusEntity.Error -> showAlertData = "Error" to result.message
-                else -> {}
+                    is CreateDishStatusEntity.Error -> showAlertData = "Error" to result.message
+                    else -> {}
+                }
+            }
+
+            item(key = "bottom_spacer") {
+                Spacer(Modifier.height(96.dp))
             }
         }
 
-        item {
-            Spacer(Modifier.height(96.dp))
-        }
-    }
-
-    var showBottomSheet by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .padding(26.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
         AnimatedVisibility(
-            visible = selectedDate == viewModel.getCurrentDate(),
+            visible = isToday,
             enter = fadeIn(),
             exit = fadeOut(),
             modifier = Modifier
+                .align(Alignment.BottomCenter)
                 .padding(26.dp)
                 .wrapContentSize()
         ) {
@@ -215,21 +196,17 @@ fun MainScreen(navController: NavController) {
                 )
             }
         }
-    }
 
-    DrawImagePicker(showBottomSheet, viewModel) { showBottomSheet = false }
+        DrawImagePicker(showBottomSheet, viewModel) { showBottomSheet = false }
+    }
 
     if (showAlertData != null) {
         AlertMessageDialog(
             title = showAlertData?.first.orEmpty(),
-            message = showAlertData?.first.orEmpty(),
+            message = showAlertData?.second.orEmpty(),
             positiveButtonText = "Ok",
             negativeButtonText = "Cancel",
-            onPositiveClick = {
-                showAlertData = null
-            },
-            onNegativeClick = {
-                showAlertData = null
-            })
+            onPositiveClick = { showAlertData = null },
+            onNegativeClick = { showAlertData = null })
     }
 }

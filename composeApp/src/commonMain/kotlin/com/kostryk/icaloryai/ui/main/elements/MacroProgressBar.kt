@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kostryk.icaloryai.theme.isDarkTheme
 
 @Composable
 fun MacroProgressBar(name: String, color: Color, value: Int, max: Int) {
@@ -35,7 +34,7 @@ fun MacroProgressBar(name: String, color: Color, value: Int, max: Int) {
             Text(
                 text = name,
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (isDarkTheme()) Color.White else Color.Black
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = "$value/${max}g",

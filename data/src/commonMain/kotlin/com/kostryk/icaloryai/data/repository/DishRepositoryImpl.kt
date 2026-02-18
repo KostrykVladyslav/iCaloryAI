@@ -35,6 +35,24 @@ class DishRepositoryImpl(
     override suspend fun getAllDishesAsFlow(): Flow<List<DishEntity>> =
         dishDatabaseDao.getAllAsFlow().map { list -> list.map { mapper.map(it) } }
 
+    override suspend fun getDishById(id: Long): Flow<DishEntity?> =
+        dishDatabaseDao.getByIdAsFlow(id).map { it?.let { mapper.map(it) } }
+
+    override suspend fun updateDish(dish: DishEntity) {
+        dishDatabaseDao.updateDish(
+            DishDatabaseEntity(
+                id = dish.id,
+                createdAt = dish.createdAt,
+                name = dish.name,
+                image = dish.imageByteArray,
+                calories = dish.calories,
+                protein = dish.protein,
+                fats = dish.fats,
+                carbs = dish.carbs
+            )
+        )
+    }
+
     override suspend fun createDish(
         description: String,
         imageBytes: ByteArray?

@@ -3,12 +3,11 @@ package com.kostryk.icaloryai.ui.main.elements
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kostryk.icaloryai.theme.isDarkTheme
 import com.valentinilk.shimmer.shimmer
 
 @Composable
@@ -17,7 +16,7 @@ fun DishLoadingSection(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .background(
-                if (isDarkTheme()) Color.DarkGray else Color.White,
+                MaterialTheme.colorScheme.surface,
                 RoundedCornerShape(16.dp)
             )
             .shimmer()
@@ -28,7 +27,7 @@ fun DishLoadingSection(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(56.dp)
                     .background(
-                        color = if (isDarkTheme()) Color.Gray else Color.LightGray,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
                         shape = RoundedCornerShape(12.dp)
                     )
             )
@@ -39,7 +38,7 @@ fun DishLoadingSection(modifier: Modifier = Modifier) {
                         .height(18.dp)
                         .fillMaxWidth(0.6f)
                         .background(
-                            color = if (isDarkTheme()) Color.Gray else Color.LightGray,
+                            color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = RoundedCornerShape(4.dp)
                         )
                 )
@@ -51,7 +50,7 @@ fun DishLoadingSection(modifier: Modifier = Modifier) {
                                 .height(12.dp)
                                 .width(40.dp)
                                 .background(
-                                    color = if (isDarkTheme()) Color.Gray else Color.LightGray,
+                                    color = MaterialTheme.colorScheme.surfaceVariant,
                                     shape = RoundedCornerShape(4.dp)
                                 )
                         )
@@ -65,11 +64,10 @@ fun DishLoadingSection(modifier: Modifier = Modifier) {
                     .height(12.dp)
                     .width(32.dp)
                     .background(
-                        color = if (isDarkTheme()) Color.Gray else Color.LightGray,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
                         shape = RoundedCornerShape(4.dp)
                     )
             )
         }
     }
 }
-

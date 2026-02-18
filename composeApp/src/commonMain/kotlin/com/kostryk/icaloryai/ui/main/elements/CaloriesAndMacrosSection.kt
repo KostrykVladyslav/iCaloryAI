@@ -11,15 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kostryk.icaloryai.theme.CarbsColor
 import com.kostryk.icaloryai.theme.FatColor
 import com.kostryk.icaloryai.theme.ProteinColor
-import com.kostryk.icaloryai.theme.isDarkTheme
 
 @Composable
 fun CaloriesAndMacrosSection(
@@ -32,7 +31,7 @@ fun CaloriesAndMacrosSection(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                color = if (isDarkTheme()) Color.DarkGray else Color.White,
+                color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(20.dp)
             )
             .padding(20.dp)
@@ -53,7 +52,7 @@ fun CaloriesAndMacrosSection(
                 Spacer(Modifier.height(8.dp))
                 MacroProgressBar("Fat", FatColor, fat.first, fat.second)
                 Spacer(Modifier.height(8.dp))
-                MacroProgressBar("Carbs", CarbsColor, calories.first, carbs.second)
+                MacroProgressBar("Carbs", CarbsColor, carbs.first, carbs.second)
             }
         }
     }

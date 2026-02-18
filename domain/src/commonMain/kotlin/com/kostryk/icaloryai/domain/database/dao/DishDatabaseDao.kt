@@ -3,6 +3,7 @@ package com.kostryk.icaloryai.domain.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.kostryk.icaloryai.domain.database.entity.DishDatabaseEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -17,5 +18,11 @@ interface DishDatabaseDao {
 
     @Query("SELECT * FROM dishes")
     fun getAllAsFlow(): Flow<List<DishDatabaseEntity>>
+
+    @Query("SELECT * FROM dishes WHERE id = :id")
+    fun getByIdAsFlow(id: Long): Flow<DishDatabaseEntity?>
+
+    @Update
+    suspend fun updateDish(dish: DishDatabaseEntity)
 
 }

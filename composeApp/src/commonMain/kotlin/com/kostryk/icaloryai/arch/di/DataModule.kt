@@ -12,6 +12,8 @@ import com.kostryk.icaloryai.domain.manager.time.DateTimeManager
 import com.kostryk.icaloryai.domain.repository.dish.DishRepository
 import com.kostryk.icaloryai.domain.usecase.dish.CreateDishUseCase
 import com.kostryk.icaloryai.domain.usecase.dish.GetAllDishesUseCase
+import com.kostryk.icaloryai.domain.usecase.dish.GetDishByIdUseCase
+import com.kostryk.icaloryai.domain.usecase.dish.UpdateDishUseCase
 import org.koin.dsl.module
 
 private val api = module {
@@ -37,6 +39,8 @@ private val manager = module {
 private val useCase = module {
     factory<CreateDishUseCase> { CreateDishUseCase(repository = get<DishRepository>()) }
     factory<GetAllDishesUseCase> { GetAllDishesUseCase(repository = get<DishRepository>()) }
+    factory<GetDishByIdUseCase> { GetDishByIdUseCase(repository = get<DishRepository>()) }
+    factory<UpdateDishUseCase> { UpdateDishUseCase(repository = get<DishRepository>()) }
 }
 
 val dataModule = module {

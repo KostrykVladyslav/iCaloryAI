@@ -27,7 +27,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kostryk.icaloryai.domain.entities.dish.DishEntity
-import com.kostryk.icaloryai.theme.isDarkTheme
 import icaloryai.composeapp.generated.resources.Res
 import icaloryai.composeapp.generated.resources.ic_food_balck
 import icaloryai.composeapp.generated.resources.ic_food_white
@@ -40,11 +39,13 @@ fun DishSection(
     onDishSelected: (DishEntity) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val isDark = MaterialTheme.colorScheme.surface == Color.DarkGray
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                if (isDarkTheme()) Color.DarkGray else Color.White,
+                MaterialTheme.colorScheme.surface,
                 RoundedCornerShape(16.dp)
             )
             .clip(RoundedCornerShape(16.dp))
@@ -56,12 +57,12 @@ fun DishSection(
                 modifier = Modifier
                     .size(56.dp)
                     .background(
-                        color = if (isDarkTheme()) Color.Gray else Color.LightGray,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
                         shape = RoundedCornerShape(12.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                val painter = image?.let { BitmapPainter(it) } ?: if (isDarkTheme()) {
+                val painter = image?.let { BitmapPainter(it) } ?: if (isDark) {
                     painterResource(Res.drawable.ic_food_white)
                 } else painterResource(Res.drawable.ic_food_balck)
                 Image(
