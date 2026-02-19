@@ -1,7 +1,7 @@
-iCaloryAI
+Nutrify
 ===================================
 
-iCaloryAI is a cross-platform mobile application built with Kotlin Multiplatform and Jetpack Compose, designed to help users track their daily meals, calories, and macronutrients in a modern and user-friendly way.
+Nutrify is a cross-platform mobile application built with Kotlin Multiplatform and Jetpack Compose, designed to help users track their daily meals, calories, and macronutrients in a modern and user-friendly way.
 
 ### Key Features
 - Kotlin Multiplatform Mobile (KMM): Shared business logic for Android and iOS, with platform-specific optimizations.
@@ -15,8 +15,8 @@ iCaloryAI is a cross-platform mobile application built with Kotlin Multiplatform
 - Localization Ready: Easily adaptable for multiple languages.
 
 ### Technologies Used
-- Kotlin Multiplatform Mobile (KMM)
-- Jetpack Compose (Multiplatform)
+- Kotlin Multiplatform (KMP)
+- Jetpack Compose
 - Android & iOS platform integration
 - Kotlinx-datetime, Generative model with Gemini, and other modern libraries
 
