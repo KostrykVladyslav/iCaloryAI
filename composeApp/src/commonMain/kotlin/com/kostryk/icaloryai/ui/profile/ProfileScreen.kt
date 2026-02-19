@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.kostryk.icaloryai.domain.enums.theme.ThemeType
 import com.kostryk.icaloryai.ui.profile.dialog.ThemeSelectorBottomSheet
 import com.kostryk.icaloryai.ui.profile.elements.Divider
@@ -38,14 +37,14 @@ import com.kostryk.icaloryai.ui.profile.elements.ProfileInfoRow
 import com.kostryk.icaloryai.ui.profile.elements.ProfileMenuItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.navigation.compose.rememberNavController
+
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
 @OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(onBack: () -> Unit = {}) {
     val viewModel = koinViewModel<ProfileViewModel>()
     var showThemeSelector by remember { mutableStateOf(false) }
 
@@ -54,7 +53,7 @@ fun ProfileScreen(navController: NavController) {
             TopAppBar(
                 title = { Text("Profile") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { onBack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
@@ -163,5 +162,5 @@ fun ProfileScreen(navController: NavController) {
 @Preview
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen(rememberNavController())
+    ProfileScreen()
 }

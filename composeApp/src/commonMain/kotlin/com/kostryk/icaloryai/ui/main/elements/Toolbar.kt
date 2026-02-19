@@ -18,8 +18,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.kostryk.icaloryai.graph.NavigationRoute
+
+
 import icaloryai.composeapp.generated.resources.Res
 import icaloryai.composeapp.generated.resources.app_name
 import icaloryai.composeapp.generated.resources.ic_profile
@@ -28,7 +28,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreenToolbar(navController: NavController) {
+fun MainScreenToolbar(onProfileClick: () -> Unit) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background
@@ -53,7 +53,7 @@ fun MainScreenToolbar(navController: NavController) {
                         interactionSource = remember { MutableInteractionSource() },
                         indication = ripple(false)
                     ) {
-                        navController.navigate(NavigationRoute.Profile.route)
+                        onProfileClick()
                     },
             )
         }

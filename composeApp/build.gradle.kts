@@ -62,7 +62,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.androidx.navigation)
+            implementation(libs.androidx.navigation3.ui)
             implementation(libs.multiplatform.settings)
             implementation(libs.kotlinx.serialization.json)
 

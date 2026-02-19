@@ -43,7 +43,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import icaloryai.composeapp.generated.resources.Res
 import icaloryai.composeapp.generated.resources.ic_food_balck
 import org.jetbrains.compose.resources.painterResource
@@ -52,7 +51,7 @@ import org.koin.core.annotation.KoinExperimentalAPI
 
 @OptIn(KoinExperimentalAPI::class)
 @Composable
-fun DishDetailsScreen(navController: NavController, dishId: String) {
+fun DishDetailsScreen(dishId: String, onBack: () -> Unit = {}) {
     val viewModel = koinViewModel<DishDetailsViewModel>()
     val state by viewModel.state.collectAsState()
 
@@ -61,7 +60,7 @@ fun DishDetailsScreen(navController: NavController, dishId: String) {
     }
 
     LaunchedEffect(state.isSaved) {
-        if (state.isSaved) navController.popBackStack()
+        if (state.isSaved) onBack()
     }
 
     val scrollState = rememberScrollState()
@@ -104,7 +103,7 @@ fun DishDetailsScreen(navController: NavController, dishId: String) {
 
             // Back button overlay
             IconButton(
-                onClick = { navController.popBackStack() },
+                onClick = { onBack() },
                 modifier = Modifier
                     .padding(16.dp)
                     .padding(top = 24.dp)

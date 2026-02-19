@@ -35,9 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.kostryk.icaloryai.domain.entities.result.CreateDishStatusEntity
-import com.kostryk.icaloryai.graph.NavigationRoute
 import com.kostryk.icaloryai.ui.main.dialog.AlertMessageDialog
 import com.kostryk.icaloryai.ui.main.elements.CalendarWeekSection
 import com.kostryk.icaloryai.ui.main.elements.CaloriesAndMacrosSection
@@ -54,7 +52,10 @@ import org.koin.core.annotation.KoinExperimentalAPI
 
 @OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToDish: (Long) -> Unit = {}
+) {
     val viewModel = koinViewModel<MainViewModel>()
 
     val calendarWeeks by viewModel.calendarWeeks.collectAsState()
@@ -89,7 +90,7 @@ fun MainScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            item(key = "toolbar") { MainScreenToolbar(navController) }
+            item(key = "toolbar") { MainScreenToolbar(onProfileClick = onNavigateToProfile) }
 
             item(key = "toolbar_spacer") { Spacer(Modifier.height(16.dp)) }
 
@@ -142,7 +143,7 @@ fun MainScreen(navController: NavController) {
                 DishSection(
                     image = image,
                     dish = dish,
-                    onDishSelected = { navController.navigate(NavigationRoute.DishDetails.createRoute(it.id.toString())) },
+                    onDishSelected = { onNavigateToDish(it.id) },
                     modifier = Modifier.animateItem()
                 )
                 Spacer(Modifier.height(12.dp))
